@@ -1,62 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teste DISC - Consultoria Rodrigo Rossi</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <main>
     <h1>Teste de Personalidade DISC - Consultoria Rodrigo Rossi</h1>
-    <p>Responda às perguntas abaixo para descobrir seu perfil comportamental.</p>
+    <p class="subtitle">Responda às perguntas abaixo para descobrir seu perfil comportamental.</p>
     
     <div class="progress-container">
-      <div id="progress-text">Pergunta 1 de 28</div>
-      <div class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-      </div>
+      <div class="progress-text" id="progress-text">Pergunta 1 de 30</div>
+      <hr>
     </div>
     
-    <form id="disc-form"></form>
+    <form id="disc-form">
+      <div class="question-card">
+        <h2>1. Quando enfrenta um problema inesperado, você tende a:</h2>
+        <div class="options-container">
+          <div class="answer-option" data-value="D">
+            <input type="radio" id="q0-D" name="q0" value="D" hidden>
+            <label for="q0-D">Agir rapidamente para resolver o problema.</label>
+          </div>
+          <div class="answer-option" data-value="I">
+            <input type="radio" id="q0-I" name="q0" value="I" hidden>
+            <label for="q0-I">Buscar apoio e envolver outras pessoas para encontrar soluções.</label>
+          </div>
+          <div class="answer-option" data-value="S">
+            <input type="radio" id="q0-S" name="q0" value="S" hidden>
+            <label for="q0-S">Manter a calma e analisar cuidadosamente antes de agir.</label>
+          </div>
+          <div class="answer-option" data-value="C">
+            <input type="radio" id="q0-C" name="q0" value="C" hidden>
+            <label for="q0-C">Revisar todos os detalhes e planejar com precisão.</label>
+          </div>
+        </div>
+      </div>
+    </form>
     
     <div class="navigation-buttons">
-      <button id="prev-btn" type="button" disabled>
+      <button id="prev-btn" disabled>
         <i class="fas fa-arrow-left"></i> Anterior
       </button>
-      <button id="next-btn" type="button">
+      <button id="next-btn">
         Próxima <i class="fas fa-arrow-right"></i>
       </button>
     </div>
-
-    <section id="results" class="hidden">
-      <div class="results-header">
-        <h2>Seu Perfil Comportamental</h2>
-        <button id="pdf-btn" type="button" class="pdf-button">
-          <i class="fas fa-file-pdf"></i> Baixar Resultado em PDF
-        </button>
-      </div>
-      
-      <div class="profile-card">
-        <p id="profile-summary"></p>
-        <h3>Pontos Fortes</h3>
-        <p id="strengths"></p>
-        <h3>Pontos de Desenvolvimento</h3>
-        <p id="development-areas"></p>
-        <h3>Relações Interpessoais</h3>
-        <p id="interpersonal-relations"></p>
-        <h3>Tomada de Decisão</h3>
-        <p id="decision-making"></p>
-        <h3>Motivador Principal</h3>
-        <p id="main-motivator"></p>
-        <h3>Motivador Secundário</h3>
-        <p id="secondary-motivator"></p>
-      </div>
-    </section>
   </main>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
