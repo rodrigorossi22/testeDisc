@@ -8,8 +8,267 @@ const questionsData = [
       "C": "Revisar todos os detalhes e planejar com precisão."
     }
   },
-  // ... (todas as outras perguntas do array original)
-  // Manter exatamente o mesmo array de perguntas que você tinha antes
+  {
+    "question": "Como você prefere trabalhar em equipe?",
+    "options": {
+      "D": "Tomando a liderança e definindo as tarefas.",
+      "I": "Motivando e inspirando os outros.",
+      "S": "Colaborando harmoniosamente e apoiando os colegas.",
+      "C": "Seguindo processos claros e garantindo qualidade."
+    }
+  },
+  {
+    "question": "Em uma reunião importante, você:",
+    "options": {
+      "D": "Foca em resultados e decisões rápidas.",
+      "I": "Tenta criar um ambiente descontraído e participativo.",
+      "S": "Escuta atentamente e busca consenso.",
+      "C": "Apresenta dados e fatos organizados."
+    }
+  },
+  {
+    "question": "O que mais te motiva no trabalho ou nos estudos?",
+    "options": {
+      "D": "Superar desafios e alcançar metas ambiciosas.",
+      "I": "Criar conexões e interagir com as pessoas.",
+      "S": "Contribuir para um ambiente estável e cooperativo.",
+      "C": "Realizar tarefas com precisão e excelência."
+    }
+  },
+  {
+    "question": "Como você lida com críticas ou feedbacks?",
+    "options": {
+      "D": "Aceita apenas se forem construtivos e úteis.",
+      "I": "Reflete sobre o feedback, mas busca apoio emocional.",
+      "S": "Escuta pacientemente e ajusta suas ações.",
+      "C": "Analisa criticamente para entender o contexto."
+    }
+  },
+  {
+    "question": "Em uma festa ou evento social, você geralmente:",
+    "options": {
+      "D": "Assume a liderança e conhece novas pessoas.",
+      "I": "É o centro das atenções e anima o ambiente.",
+      "S": "Observa primeiro antes de interagir.",
+      "C": "Prefere conversas profundas e significativas."
+    }
+  },
+  {
+    "question": "Quando precisa tomar uma decisão importante, você:",
+    "options": {
+      "D": "Confia no instinto e age rapidamente.",
+      "I": "Consulta amigos ou colegas para ter diferentes perspectivas.",
+      "S": "Pensa nas consequências para evitar conflitos.",
+      "C": "Reúne dados e faz uma análise lógica."
+    }
+  },
+  {
+    "question": "Qual ambiente de trabalho ou estudo você prefere?",
+    "options": {
+      "D": "Competitivo, onde posso mostrar meu desempenho.",
+      "I": "Dinâmico, com muita interação e energia.",
+      "S": "Estável, onde posso manter rotinas e previsibilidade.",
+      "C": "Estruturado, com regras claras e processos bem definidos."
+    }
+  },
+  {
+    "question": "Como você reage a mudanças repentinas?",
+    "options": {
+      "D": "Vejo como uma oportunidade para agir com rapidez.",
+      "I": "Me adapto facilmente e tento torná-las divertidas.",
+      "S": "Preciso de tempo para me ajustar.",
+      "C": "Avalio cuidadosamente os impactos antes de aceitar."
+    }
+  },
+  {
+    "question": "O que mais valoriza nas relações pessoais?",
+    "options": {
+      "D": "Respeito e admiração pelos meus resultados.",
+      "I": "Alegria, diversão e momentos memoráveis.",
+      "S": "Lealdade, confiança e apoio mútuo.",
+      "C": "Honestidade, transparência e compromisso."
+    }
+  },
+  {
+    "question": "Quando está sob pressão, você tende a:",
+    "options": {
+      "D": "Agir de forma assertiva e assumir o controle.",
+      "I": "Procurar apoio emocional e incentivar os outros.",
+      "S": "Manter a calma e evitar confrontos.",
+      "C": "Seguir protocolos para garantir que tudo esteja certo."
+    }
+  },
+  {
+    "question": "O que você mais gosta em aprender algo novo?",
+    "options": {
+      "D": "Aplicar rapidamente e ver resultados concretos.",
+      "I": "Compartilhar o que aprendeu com outras pessoas.",
+      "S": "Entender como isso pode trazer equilíbrio à minha vida.",
+      "C": "Dominar todos os detalhes e garantir precisão."
+    }
+  },
+  {
+    "question": "Como você prefere receber instruções?",
+    "options": {
+      "D": "Diretas e objetivas, sem muitos detalhes.",
+      "I": "De forma entusiasmada e motivadora.",
+      "S": "Com paciência e espaço para perguntas.",
+      "C": "Organizadas e com informações completas."
+    }
+  },
+  {
+    "question": "O que mais te frustra no trabalho ou nos estudos?",
+    "options": {
+      "D": "Falta de desafios ou metas ambiciosas.",
+      "I": "Ambientes monótonos e sem interação.",
+      "S": "Conflitos ou mudanças bruscas.",
+      "C": "Falta de organização ou imprecisão."
+    }
+  },
+  {
+    "question": "Como você avalia sua capacidade de persuasão?",
+    "options": {
+      "D": "Sou direto(a) e objetivo(a).",
+      "I": "Uso criatividade e entusiasmo.",
+      "S": "Construo confiança ao longo do tempo.",
+      "C": "Baseio-me em fatos e dados."
+    }
+  },
+  {
+    "question": "O que mais te motiva a alcançar seus objetivos?",
+    "options": {
+      "D": "Reconhecimento e status.",
+      "I": "Relacionamentos e colaboração.",
+      "S": "Harmonia e estabilidade.",
+      "C": "Precisão e excelência."
+    }
+  },
+  {
+    "question": "Como você lida com prazos apertados?",
+    "options": {
+      "D": "Priorizo tarefas e agilizo o processo.",
+      "I": "Motivo a equipe para superar o desafio.",
+      "S": "Mantenho a calma e sigo o planejamento.",
+      "C": "Verifico cada detalhe para evitar erros."
+    }
+  },
+  {
+    "question": "O que mais te atrai em um projeto?",
+    "options": {
+      "D": "A possibilidade de liderar e inovar.",
+      "I": "A chance de interagir e motivar pessoas.",
+      "S": "A previsibilidade e segurança.",
+      "C": "A estrutura e organização."
+    }
+  },
+  {
+    "question": "Como você reage a situações de risco?",
+    "options": {
+      "D": "Encaro como uma oportunidade de crescimento.",
+      "I": "Procuro apoio para avaliar os prós e contras.",
+      "S": "Evito riscos desnecessários.",
+      "C": "Analiso cuidadosamente antes de agir."
+    }
+  },
+  {
+    "question": "O que mais valoriza em um líder?",
+    "options": {
+      "D": "Decisão e assertividade.",
+      "I": "Carisma e capacidade de inspirar.",
+      "S": "Empatia e paciência.",
+      "C": "Organização e atenção aos detalhes."
+    }
+  },
+  {
+    "question": "Como você lida com conflitos interpessoais?",
+    "options": {
+      "D": "Enfrento diretamente para resolver.",
+      "I": "Busco mediar e promover entendimento.",
+      "S": "Evito confrontos para manter a harmonia.",
+      "C": "Analiso o contexto para propor soluções."
+    }
+  },
+  {
+    "question": "O que mais te motiva em um ambiente de trabalho?",
+    "options": {
+      "D": "Metas desafiadoras e reconhecimento.",
+      "I": "Interação e colaboração com a equipe.",
+      "S": "Estabilidade e previsibilidade.",
+      "C": "Processos claros e organização."
+    }
+  },
+  {
+    "question": "Como você avalia sua capacidade de lidar com o estresse?",
+    "options": {
+      "D": "Sou resiliente e me adapto rapidamente.",
+      "I": "Busco apoio para lidar com a frustração.",
+      "S": "Mantenho a calma e evito reações impulsivas.",
+      "C": "Planejo estratégias para gerenciar o estresse."
+    }
+  },
+  {
+    "question": "O que mais te frustra em um ambiente de trabalho?",
+    "options": {
+      "D": "Falta de autonomia ou liberdade.",
+      "I": "Ambientes isolados ou pouco interativos.",
+      "S": "Conflitos ou falta de harmonia.",
+      "C": "Desorganização ou imprecisão."
+    }
+  },
+  {
+    "question": "Como você define seu estilo de comunicação?",
+    "options": {
+      "D": "Direto, objetivo e focado em resultados.",
+      "I": "Animado, entusiasmado e criativo.",
+      "S": "Calmo, empático e paciente.",
+      "C": "Detalhista, organizado e preciso."
+    }
+  },
+  {
+    "question": "O que mais te atrai em uma nova oportunidade?",
+    "options": {
+      "D": "Desafios e chances de crescimento.",
+      "I": "Possibilidades de interação e networking.",
+      "S": "Estabilidade e segurança.",
+      "C": "Organização e clareza nos processos."
+    }
+  },
+  {
+    "question": "Como você lida com feedback negativo?",
+    "options": {
+      "D": "Aceito apenas se for relevante e útil.",
+      "I": "Procuro apoio para lidar com a frustração.",
+      "S": "Reflito calmamente e ajusto minhas ações.",
+      "C": "Analiso criticamente para entender o contexto."
+    }
+  },
+  {
+    "question": "O que mais valoriza em uma equipe?",
+    "options": {
+      "D": "Eficiência e resultados rápidos.",
+      "I": "Energia positiva e colaboração.",
+      "S": "Harmonia e confiança mútua.",
+      "C": "Precisão e atenção aos detalhes."
+    }
+  },
+  {
+    "question": "Como você avalia sua capacidade de adaptar-se a novas situações?",
+    "options": {
+      "D": "Sou flexível e me adapto rapidamente.",
+      "I": "Busco apoio para facilitar a transição.",
+      "S": "Prefiro manter a rotina sempre que possível.",
+      "C": "Analiso cuidadosamente antes de me adaptar."
+    }
+  },
+  {
+    "question": "O que mais te motiva a buscar crescimento pessoal?",
+    "options": {
+      "D": "Alcançar metas ambiciosas e ser reconhecido(a).",
+      "I": "Criar conexões e inspirar outras pessoas.",
+      "S": "Promover harmonia e equilíbrio na vida.",
+      "C": "Aperfeiçoar habilidades e garantir precisão."
+    }
+  }
 ];
 
 const profiles = {
