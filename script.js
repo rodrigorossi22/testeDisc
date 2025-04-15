@@ -314,14 +314,6 @@ const profiles = {
   }
 };
 
-const questionsData = [
-  // ... (mantenha TODAS as 28 perguntas aqui, sem duplicação)
-];
-
-const profiles = {
-  // ... (mantenha TODOS os 4 perfis aqui, sem duplicação)
-];
-
 class DiscTest {
   constructor(questions, profiles) {
     this.questions = questions;
