@@ -54,38 +54,43 @@ class DiscTest {
     document.getElementById('pdf-btn').addEventListener('click', () => this.generatePDF());
   }
   
-  renderQuestion() {
-    this.formElement.innerHTML = '';
+ renderQuestion() {
+  this.formElement.innerHTML = '';
+  
+  const question = this.questions[this.currentQuestion];
+  const questionDiv = document.createElement('div');
+  questionDiv.className = 'question-card active'; // Adicionei 'active'
+  questionDiv.innerHTML = `<h3>${this.currentQuestion + 1}. ${question.question}</h3>`;
+  
+  Object.entries(question.options).forEach(([key, text]) => {
+    const optionId = `q${this.currentQuestion}-${key}`;
+    const isChecked = this.answers[this.currentQuestion] === key;
     
-    const question = this.questions[this.currentQuestion];
-    const questionDiv = document.createElement('div');
-    questionDiv.className = 'question-card';
-    questionDiv.innerHTML = `<h3>${this.currentQuestion + 1}. ${question.question}</h3>`;
-    
-    Object.entries(question.options).forEach(([key, text]) => {
-      const optionId = `q${this.currentQuestion}-${key}`;
-      const isChecked = this.answers[this.currentQuestion] === key;
-      
-      questionDiv.innerHTML += `
-        <div class="answer-option ${isChecked ? 'selected' : ''}" data-value="${key}">
-          <input type="radio" id="${optionId}" name="q${this.currentQuestion}" 
-                 value="${key}" ${isChecked ? 'checked' : ''} hidden />
-          <label for="${optionId}">${text}</label>
-        </div>
-      `;
+    questionDiv.innerHTML += `
+      <div class="answer-option ${isChecked ? 'selected' : ''}" data-value="${key}">
+        <input type="radio" id="${optionId}" name="q${this.currentQuestion}" 
+               value="${key}" ${isChecked ? 'checked' : ''} hidden />
+        <label for="${optionId}">${text}</label>
+      </div>
+    `;
+  });
+  
+  this.formElement.appendChild(questionDiv);
+  this.updateProgress();
+  
+  // Mostrar apenas a pergunta atual
+  document.querySelectorAll('.question-card').forEach((card, index) => {
+    card.style.display = index === this.currentQuestion ? 'block' : 'none';
+  });
+
+  document.querySelectorAll('.answer-option').forEach(option => {
+    option.addEventListener('click', () => {
+      const value = option.getAttribute('data-value');
+      this.answers[this.currentQuestion] = value;
+      this.renderQuestion();
     });
-    
-    this.formElement.appendChild(questionDiv);
-    this.updateProgress();
-    
-    document.querySelectorAll('.answer-option').forEach(option => {
-      option.addEventListener('click', () => {
-        const value = option.getAttribute('data-value');
-        this.answers[this.currentQuestion] = value;
-        this.renderQuestion();
-      });
-    });
-  }
+  });
+}
   
   updateProgress() {
     const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
