@@ -134,3 +134,51 @@ button:disabled {
 #next-btn.finish-btn:hover {
   background-color: #218838; /* Verde mais escuro */
 }
+
+/* Container do cabeçalho dos resultados */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Estilo aprimorado para o botão PDF */
+.pdf-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.pdf-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.pdf-button i {
+  font-size: 18px;
+}
+
+/* Ajuste para mobile */
+@media (max-width: 600px) {
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .pdf-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
