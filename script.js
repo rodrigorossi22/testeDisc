@@ -341,6 +341,12 @@ class DiscTest {
     this.prevBtn.addEventListener('click', () => this.prevQuestion());
     this.nextBtn.addEventListener('click', () => this.nextQuestion());
     document.getElementById('pdf-btn')?.addEventListener('click', () => this.generatePDF());
+    const pdfBtn = document.getElementById('pdf-btn');
+  if (pdfBtn) {
+    pdfBtn.addEventListener('click', () => this.generatePDF());
+  } else {
+    console.error("Botão PDF não encontrado");
+  }
   }
   
   renderQuestion() {
@@ -451,11 +457,24 @@ class DiscTest {
     this.resultsSection.scrollIntoView({ behavior: 'smooth' });
   }
   
-  generatePDF() {
+
+generatePDF() {
+  try {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF();
     
-    // ... (implementação da geração de PDF)
+    // Configurações do PDF
+    pdf.setFont('helvetica');
+    pdf.setFontSize(20);
+    pdf.text('Seu Perfil DISC - Consultoria Rodrigo Rossi', 105, 20, { align: 'center' });
+    
+    // Adicione o conteúdo do perfil
+    // ... (mantenha o restante da função como estava)
+    
+    pdf.save('perfil-disc.pdf');
+  } catch (error) {
+    console.error("Erro ao gerar PDF:", error);
+    alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
   }
 }
 
