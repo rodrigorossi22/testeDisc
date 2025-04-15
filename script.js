@@ -338,16 +338,16 @@ class DiscTest {
   }
   
   setupEventListeners() {
-    this.prevBtn.addEventListener('click', () => this.prevQuestion());
-    this.nextBtn.addEventListener('click', () => this.nextQuestion());
-    document.getElementById('pdf-btn')?.addEventListener('click', () => this.generatePDF());
-    const pdfBtn = document.getElementById('pdf-btn');
+  this.prevBtn.addEventListener('click', () => this.prevQuestion());
+  this.nextBtn.addEventListener('click', () => this.nextQuestion());
+  
+  const pdfBtn = document.getElementById('pdf-btn');
   if (pdfBtn) {
     pdfBtn.addEventListener('click', () => this.generatePDF());
   } else {
     console.error("Botão PDF não encontrado");
   }
-  }
+}
   
   renderQuestion() {
     this.formElement.innerHTML = '';
@@ -463,13 +463,59 @@ generatePDF() {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF();
     
-    // Configurações do PDF
+    // Configurações iniciais
     pdf.setFont('helvetica');
     pdf.setFontSize(20);
     pdf.text('Seu Perfil DISC - Consultoria Rodrigo Rossi', 105, 20, { align: 'center' });
     
-    // Adicione o conteúdo do perfil
-    // ... (mantenha o restante da função como estava)
+    // Adicionar data
+    pdf.setFontSize(10);
+    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+    
+    // Adicionar conteúdo do perfil
+    pdf.setFontSize(12);
+    let yPosition = 45;
+    
+    // Perfil principal
+    const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
+    const profileText = document.getElementById('profile-summary').lastChild.textContent;
+    
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(profileTitle, 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(12);
+    const splitText = pdf.splitTextToSize(profileText, 170);
+    pdf.text(splitText, 20, yPosition);
+    yPosition += splitText.length * 7 + 15;
+    
+    // Adicionar outras seções
+    const sections = [
+      'Pontos Fortes', 'Pontos de Desenvolvimento',
+      'Relações Interpessoais', 'Tomada de Decisão',
+      'Motivador Principal', 'Motivador Secundário'
+    ];
+    
+    sections.forEach(section => {
+      if (yPosition > 250) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+      
+      const contentElement = document.getElementById(section.toLowerCase().replace(' ', '-'));
+      const content = contentElement ? contentElement.textContent : '';
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${section}:`, 20, yPosition);
+      yPosition += 7;
+      
+      pdf.setFont('helvetica', 'normal');
+      const splitContent = pdf.splitTextToSize(content, 170);
+      pdf.text(splitContent, 25, yPosition);
+      yPosition += splitContent.length * 7 + 10;
+    });
     
     pdf.save('perfil-disc.pdf');
   } catch (error) {
