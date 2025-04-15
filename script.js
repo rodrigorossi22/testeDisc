@@ -465,3 +465,4 @@ class DiscTest {
 document.addEventListener('DOMContentLoaded', () => {
   new DiscTest(questionsData, profiles);
 });
+console.log("Total de perguntas carregadas:", questionsData.length);
