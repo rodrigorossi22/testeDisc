@@ -381,14 +381,23 @@ class DiscTest {
     });
   }
   
-  updateProgress() {
-    const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
-    this.progressBar.style.width = `${progress}%`;
-    this.progressText.textContent = `Pergunta ${this.currentQuestion + 1} de ${this.questions.length}`;
-    
-    this.prevBtn.disabled = this.currentQuestion === 0;
-    this.nextBtn.disabled = this.currentQuestion === this.questions.length - 1;
+ updateProgress() {
+  const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
+  this.progressBar.style.width = `${progress}%`;
+  this.progressText.textContent = `Pergunta ${this.currentQuestion + 1} de ${this.questions.length}`;
+  
+  this.prevBtn.disabled = this.currentQuestion === 0;
+  
+  // Modificação aqui - muda o texto do botão na última pergunta
+  if (this.currentQuestion === this.questions.length - 1) {
+    this.nextBtn.textContent = 'Finalizar';
+    this.nextBtn.innerHTML = '<i class="fas fa-check"></i> Finalizar';
+    this.nextBtn.disabled = false; // Garante que está ativo
+  } else {
+    this.nextBtn.textContent = 'Próxima';
+    this.nextBtn.innerHTML = 'Próxima <i class="fas fa-arrow-right"></i>';
   }
+}
   
   prevQuestion() {
     if (this.currentQuestion > 0) {
