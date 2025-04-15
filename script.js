@@ -274,16 +274,44 @@ const questionsData = [
 const profiles = {
   D: {
     name: "Dominante (D)",
-    summary: "Você é uma pessoa determinada, direta e orientada para resultados...",
-    strengths: "Liderança natural;<br>Capacidade de resolver problemas rapidamente;<br>Foco em metas e resultados.",
-    development: "Pode ser impulsivo(a)...<br>Dificuldade em lidar com ambiguidades.",
-    relations: "Interage de forma assertiva e direta...",
-    decisions: "Toma decisões rápidas e baseadas em resultados imediatos.",
+    summary: "Você é uma pessoa determinada, direta e orientada para resultados. Tem grande capacidade de tomar decisões rápidas e enfrentar desafios com confiança.",
+    strengths: "Liderança natural;<br>Capacidade de resolver problemas rapidamente;<br>Foco em metas e resultados;<br>Independência e autoconfiança.",
+    development: "Pode ser impulsivo(a) em algumas situações;<br>Dificuldade em lidar com ambiguidades;<br>Às vezes pode parecer autoritário(a).",
+    relations: "Interage de forma assertiva e direta;<br>Valora respeito e admiração pelos resultados;<br>Prefere comunicação objetiva e sem rodeios.",
+    decisions: "Toma decisões rápidas e baseadas em resultados imediatos;<br>Foca em soluções práticas e eficientes.",
     mainMotivator: "Alcançar metas ambiciosas e ser reconhecido(a).",
     secondaryMotivator: "Criar conexões e inspirar outras pessoas."
   },
-  // ... (todos os outros perfis do objeto original)
-  // Manter exatamente o mesmo objeto de perfis que você tinha antes
+  I: {
+    name: "Influente (I)",
+    summary: "Você é uma pessoa comunicativa, entusiasmada e sociável. Tem facilidade para motivar os outros e criar um ambiente positivo.",
+    strengths: "Habilidade para motivar e engajar;<br>Criatividade e espontaneidade;<br>Ótimo networking e habilidades sociais;<br>Capacidade de inspirar outras pessoas.",
+    development: "Pode ser distraído(a) com detalhes;<br>Às vezes fala mais do que ouve;<br>Pode ter dificuldade com rotinas muito estruturadas.",
+    relations: "Interage de forma calorosa e amigável;<br>Gosta de reconhecimento e elogios;<br>Prefere ambientes animados e descontraídos.",
+    decisions: "Toma decisões baseadas no consenso e no impacto nas pessoas;<br>Considera o lado emocional das situações.",
+    mainMotivator: "Criar conexões e inspirar outras pessoas.",
+    secondaryMotivator: "Promover harmonia e equilíbrio na vida."
+  },
+  S: {
+    name: "Estável (S)",
+    summary: "Você é uma pessoa paciente, gentil e que valoriza a harmonia. Tem grande capacidade de ouvir e trabalhar em equipe de forma cooperativa.",
+    strengths: "Empatia e sensibilidade;<br>Lealdade e comprometimento;<br>Ótimo ouvinte e mediador de conflitos;<br>Capacidade de manter a calma sob pressão.",
+    development: "Pode ser resistente a mudanças;<br>Às vezes evita confrontos necessários;<br>Pode ter dificuldade em dizer não.",
+    relations: "Interage de forma calma e empática;<br>Valora lealdade e confiança mútua;<br>Prefere ambientes estáveis e previsíveis.",
+    decisions: "Toma decisões refletidas e baseadas nas consequências para os outros;<br>Prefere consenso e harmonia.",
+    mainMotivator: "Promover harmonia e equilíbrio na vida.",
+    secondaryMotivator: "Aperfeiçoar habilidades e garantir precisão."
+  },
+  C: {
+    name: "Conformidade (C)",
+    summary: "Você é uma pessoa detalhista, organizada e que valoriza a precisão. Tem grande capacidade de análise e busca sempre a excelência.",
+    strengths: "Atento(a) aos detalhes;<br>Preocupado(a) com qualidade e precisão;<br>Ótimo(a) em análise de dados;<br>Capacidade de seguir procedimentos complexos.",
+    development: "Pode ser perfeccionista demais;<br>Às vezes perde o foco no panorama geral;<br>Pode ter dificuldade com mudanças de última hora.",
+    relations: "Interage de forma formal e lógica;<br>Valora honestidade e transparência;<br>Prefere comunicação clara e baseada em fatos.",
+    decisions: "Toma decisões baseadas em dados e análises cuidadosas;<br>Busca a opção mais precisa e correta.",
+    mainMotivator: "Aperfeiçoar habilidades e garantir precisão.",
+    secondaryMotivator: "Alcançar metas ambiciosas e ser reconhecido(a)."
+  }
 };
 
 const questionsData = [
