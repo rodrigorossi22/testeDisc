@@ -1,3 +1,7 @@
+console.log("=== INICIANDO TESTE DISC ===");
+console.log("Total de perguntas:", questionsData.length);
+console.log("Perfis carregados:", Object.keys(profiles).length);
+
 const questionsData = [
   {
     "question": "Quando enfrenta um problema inesperado, você tende a:",
@@ -316,6 +320,7 @@ const profiles = {
 
 class DiscTest {
   constructor(questions, profiles) {
+    console.log("Inicializando teste..."); // Debug
     this.questions = questions;
     this.profiles = profiles;
     this.currentQuestion = 0;
@@ -324,7 +329,8 @@ class DiscTest {
     this.initElements();
     this.renderQuestion();
     this.setupEventListeners();
-    
+  }
+ 
     console.log("Teste DISC inicializado com", questions.length, "perguntas");
   }
   
@@ -529,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     new DiscTest(questionsData, profiles);
   } catch (error) {
-    console.error("Erro ao inicializar o teste:", error);
-    alert("Ocorreu um erro ao carregar o teste. Por favor, recarregue a página.");
+    console.error("Erro ao inicializar:", error);
+    alert("Erro ao carregar o teste. Recarregue a página.");
   }
 });
