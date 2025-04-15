@@ -286,6 +286,14 @@ const profiles = {
   // Manter exatamente o mesmo objeto de perfis que você tinha antes
 };
 
+const questionsData = [
+  // ... (mantenha todo o array questionsData que você já tem)
+];
+
+const profiles = {
+  // ... (mantenha todo o objeto profiles que você já tem)
+};
+
 class DiscTest {
   constructor(questions, profiles) {
     this.questions = questions;
@@ -296,6 +304,8 @@ class DiscTest {
     this.initElements();
     this.renderQuestion();
     this.setupEventListeners();
+    
+    console.log("Teste DISC inicializado com", questions.length, "perguntas");
   }
   
   initElements() {
@@ -310,77 +320,55 @@ class DiscTest {
   setupEventListeners() {
     this.prevBtn.addEventListener('click', () => this.prevQuestion());
     this.nextBtn.addEventListener('click', () => this.nextQuestion());
-    document.getElementById('pdf-btn').addEventListener('click', () => this.generatePDF());
+    document.getElementById('pdf-btn')?.addEventListener('click', () => this.generatePDF());
   }
+  
   renderQuestion() {
-  // Limpa o formulário
-  this.formElement.innerHTML = '';
-  
-  // Cria o container da pergunta atual
-  const question = this.questions[this.currentQuestion];
-  const questionDiv = document.createElement('div');
-  questionDiv.className = 'question-card';
-  questionDiv.dataset.questionIndex = this.currentQuestion;
-  
-  // Adiciona a pergunta
-  questionDiv.innerHTML = `<h3>${this.currentQuestion + 1}. ${question.question}</h3>`;
-  
-  // Adiciona as opções de resposta
-  Object.entries(question.options).forEach(([key, text]) => {
-    const optionId = `q${this.currentQuestion}-${key}`;
-    const isChecked = this.answers[this.currentQuestion] === key;
+    // Limpa o formulário completamente
+    this.formElement.innerHTML = '';
     
-    questionDiv.innerHTML += `
-      <div class="answer-option ${isChecked ? 'selected' : ''}" data-value="${key}">
-        <input type="radio" id="${optionId}" name="q${this.currentQuestion}" 
-               value="${key}" ${isChecked ? 'checked' : ''} hidden />
-        <label for="${optionId}">${text}</label>
+    const question = this.questions[this.currentQuestion];
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question-card';
+    questionDiv.innerHTML = `
+      <h3>${this.currentQuestion + 1}. ${question.question}</h3>
+      <div class="options-container">
+        ${Object.entries(question.options).map(([key, text]) => `
+          <div class="answer-option" data-value="${key}">
+            <input type="radio" id="q${this.currentQuestion}-${key}" 
+                   name="q${this.currentQuestion}" value="${key}" hidden />
+            <label for="q${this.currentQuestion}-${key}">${text}</label>
+          </div>
+        `).join('')}
       </div>
     `;
-  });
+    
+    this.formElement.appendChild(questionDiv);
+    this.updateProgress();
+    this.setupOptionListeners();
+  }
   
-  // Adiciona ao formulário
-  this.formElement.appendChild(questionDiv);
-  
-  // Atualiza a barra de progresso
-  this.updateProgress();
-  
-  // Configura os eventos das opções
-  document.querySelectorAll('.answer-option').forEach(option => {
-    option.addEventListener('click', () => {
-      const value = option.getAttribute('data-value');
-      this.answers[this.currentQuestion] = value;
-      // Não precisa re-renderizar, apenas atualiza a seleção
-      document.querySelectorAll('.answer-option').forEach(opt => {
-        opt.classList.toggle('selected', opt === option);
+  setupOptionListeners() {
+    document.querySelectorAll('.answer-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.getAttribute('data-value');
+        this.answers[this.currentQuestion] = value;
+        
+        // Atualiza a seleção visual
+        document.querySelectorAll('.answer-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        option.classList.add('selected');
       });
     });
-  });
-}
-
-  
-  this.formElement.appendChild(questionDiv);
-  this.updateProgress();
-  
-  // Mostrar apenas a pergunta atual
-  document.querySelectorAll('.question-card').forEach((card, index) => {
-    card.style.display = index === this.currentQuestion ? 'block' : 'none';
-  });
-
-  document.querySelectorAll('.answer-option').forEach(option => {
-    option.addEventListener('click', () => {
-      const value = option.getAttribute('data-value');
-      this.answers[this.currentQuestion] = value;
-      this.renderQuestion();
-    });
-  });
-}
+  }
   
   updateProgress() {
     const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
     this.progressBar.style.width = `${progress}%`;
     this.progressText.textContent = `Pergunta ${this.currentQuestion + 1} de ${this.questions.length}`;
     
+    // Atualiza estado dos botões
     this.prevBtn.disabled = this.currentQuestion === 0;
     this.nextBtn.disabled = this.currentQuestion === this.questions.length - 1;
   }
@@ -416,6 +404,7 @@ class DiscTest {
     const top = Object.keys(scores).filter(k => scores[k] === maxScore);
     const selectedProfile = this.profiles[top[0]];
     
+    // Preenche os resultados
     document.getElementById('profile-summary').innerHTML = `
       <strong>${selectedProfile.name}</strong><br>${selectedProfile.summary}
     `;
@@ -426,68 +415,22 @@ class DiscTest {
     document.getElementById('main-motivator').textContent = selectedProfile.mainMotivator;
     document.getElementById('secondary-motivator').textContent = selectedProfile.secondaryMotivator;
     
+    // Mostra a seção de resultados
     this.resultsSection.classList.remove('hidden');
     this.resultsSection.scrollIntoView({ behavior: 'smooth' });
   }
   
   generatePDF() {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    
-    pdf.setFont('helvetica');
-    pdf.setFontSize(20);
-    pdf.text('Seu Perfil DISC', 105, 20, { align: 'center' });
-    
-    pdf.setFontSize(10);
-    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
-    
-    pdf.setFontSize(12);
-    let yPosition = 45;
-    
-    const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
-    const profileText = document.getElementById('profile-summary').lastChild.textContent;
-    
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(profileTitle, 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(12);
-    const splitText = pdf.splitTextToSize(profileText, 170);
-    pdf.text(splitText, 20, yPosition);
-    yPosition += splitText.length * 7 + 15;
-    
-    const sections = [
-      'Pontos Fortes', 'Pontos de Desenvolvimento',
-      'Relações Interpessoais', 'Tomada de Decisão',
-      'Motivador Principal', 'Motivador Secundário'
-    ];
-    
-    sections.forEach(section => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      const contentElement = document.getElementById(section.toLowerCase().replace(' ', '-'));
-      const content = contentElement ? contentElement.textContent : '';
-      
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`${section}:`, 20, yPosition);
-      yPosition += 7;
-      
-      pdf.setFont('helvetica', 'normal');
-      const splitContent = pdf.splitTextToSize(content, 170);
-      pdf.text(splitContent, 25, yPosition);
-      yPosition += splitContent.length * 7 + 10;
-    });
-    
-    pdf.save('perfil-disc.pdf');
+    // ... (mantenha a mesma função generatePDF que você já tem)
   }
 }
 
+// Inicialização quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
-  new DiscTest(questionsData, profiles);
+  try {
+    new DiscTest(questionsData, profiles);
+  } catch (error) {
+    console.error("Erro ao inicializar o teste:", error);
+    alert("Ocorreu um erro ao carregar o teste. Por favor, recarregue a página.");
+  }
 });
-console.log("Total de perguntas carregadas:", questionsData.length);
