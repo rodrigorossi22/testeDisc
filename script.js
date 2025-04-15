@@ -467,134 +467,98 @@ class DiscTest {
     document.dispatchEvent(new Event('resultsShown'));
   }
   
- generatePDF() {
-  if (!window.jspdf) {
-    console.error("Biblioteca jsPDF não carregada");
-    alert("Recurso de PDF não disponível. Por favor, recarregue a página.");
-    return;
-  }
-
-  try {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
+  generatePDF() {
+    if (!window.jspdf) {
+      console.error("Biblioteca jsPDF não carregada");
+      alert("Recurso de PDF não disponível. Por favor, recarregue a página.");
+      return;
+    }
     
-    // Configurações de estilo
-    const styles = {
-      title: { size: 20, font: 'helvetica', style: 'bold' },
-      subtitle: { size: 16, font: 'helvetica', style: 'bold' },
-      normal: { size: 12, font: 'helvetica', style: 'normal' },
-      small: { size: 10, font: 'helvetica', style: 'normal' },
-      question: { size: 12, font: 'helvetica', style: 'bold' },
-      answer: { size: 11, font: 'helvetica', style: 'normal' }
-    };
-
-    // Cabeçalho
-    pdf.setFont(styles.title.font, styles.title.style);
-    pdf.setFontSize(styles.title.size);
-    pdf.text('Seu Perfil DISC - Consultoria Rodrigo Rossi', 105, 20, { align: 'center' });
-    
-    // Data
-    pdf.setFont(styles.small.font, styles.small.style);
-    pdf.setFontSize(styles.small.size);
-    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
-    
-    // Perfil principal
-    let yPosition = 45;
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Seu Perfil Principal:', 20, yPosition);
-    
-    yPosition += 10;
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    
-    const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
-    const profileText = document.getElementById('profile-summary').lastChild.textContent;
-    
-    pdf.text(profileTitle, 20, yPosition);
-    yPosition += 8;
-    
-    const splitProfileText = pdf.splitTextToSize(profileText, 170);
-    pdf.text(splitProfileText, 20, yPosition);
-    yPosition += splitProfileText.length * 7 + 15;
-
-    // Seção de Perguntas e Respostas
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Suas Respostas:', 20, yPosition);
-    yPosition += 15;
-
-    // Adiciona cada pergunta e resposta ao PDF
-    this.questions.forEach((question, index) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-
-      const answerKey = this.answers[index];
-      const answerText = answerKey ? question.options[answerKey] : "Não respondida";
-
-      // Pergunta
-      pdf.setFont(styles.question.font, styles.question.style);
-      pdf.setFontSize(styles.question.size);
-      const questionText = `${index + 1}. ${question.question}`;
-      const splitQuestion = pdf.splitTextToSize(questionText, 170);
-      pdf.text(splitQuestion, 20, yPosition);
-      yPosition += splitQuestion.length * 7 + 5;
-
-      // Resposta
-      pdf.setFont(styles.answer.font, styles.answer.style);
-      pdf.setFontSize(styles.answer.size);
-      pdf.text(`→ ${answerText}`, 25, yPosition);
-      yPosition += 10;
-
-      // Espaço entre perguntas
-      yPosition += 5;
-    });
-
-    yPosition += 15;
-
-    // Seções dos resultados
-    const sections = [
-      { id: 'strengths', title: 'Pontos Fortes' },
-      { id: 'development-areas', title: 'Áreas de Desenvolvimento' },
-      { id: 'interpersonal-relations', title: 'Relações Interpessoais' },
-      { id: 'decision-making', title: 'Tomada de Decisão' },
-      { id: 'main-motivator', title: 'Motivador Principal' },
-      { id: 'secondary-motivator', title: 'Motivador Secundário' }
-    ];
-    
-    // Adiciona cada seção ao PDF
-    sections.forEach(section => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
+    try {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
       
+      // Configurações de estilo
+      const styles = {
+        title: { size: 20, font: 'helvetica', style: 'bold' },
+        subtitle: { size: 16, font: 'helvetica', style: 'bold' },
+        normal: { size: 12, font: 'helvetica', style: 'normal' },
+        small: { size: 10, font: 'helvetica', style: 'normal' }
+      };
+      
+      // Cabeçalho
+      pdf.setFont(styles.title.font, styles.title.style);
+      pdf.setFontSize(styles.title.size);
+      pdf.text('Seu Perfil DISC - Consultoria Rodrigo Rossi', 105, 20, { align: 'center' });
+      
+      // Data
+      pdf.setFont(styles.small.font, styles.small.style);
+      pdf.setFontSize(styles.small.size);
+      pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+      
+      // Perfil principal
+      let yPosition = 45;
       pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-      pdf.text(`${section.title}:`, 20, yPosition);
+      pdf.setFontSize(styles.subtitle.size);
+      pdf.text('Seu Perfil Principal:', 20, yPosition);
+      
       yPosition += 10;
-      
       pdf.setFont(styles.normal.font, styles.normal.style);
-      const contentElement = document.getElementById(section.id);
-      let content = '';
+      pdf.setFontSize(styles.normal.size);
       
-      if (contentElement) {
-        content = contentElement.textContent || contentElement.innerHTML.replace(/<br\s*\/?>/gi, '\n');
-      }
+      const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
+      const profileText = document.getElementById('profile-summary').lastChild.textContent;
       
-      const splitContent = pdf.splitTextToSize(content, 170);
-      pdf.text(splitContent, 25, yPosition);
-      yPosition += splitContent.length * 7 + 15;
-    });
-    
-    pdf.save('perfil-disc.pdf');
-    
-  } catch (error) {
-    console.error("Erro ao gerar PDF:", error);
-    alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
+      pdf.text(profileTitle, 20, yPosition);
+      yPosition += 8;
+      
+      const splitProfileText = pdf.splitTextToSize(profileText, 170);
+      pdf.text(splitProfileText, 20, yPosition);
+      yPosition += splitProfileText.length * 7 + 15;
+      
+      // Seções dos resultados
+      const sections = [
+        { id: 'strengths', title: 'Pontos Fortes' },
+        { id: 'development-areas', title: 'Áreas de Desenvolvimento' },
+        { id: 'interpersonal-relations', title: 'Relações Interpessoais' },
+        { id: 'decision-making', title: 'Tomada de Decisão' },
+        { id: 'main-motivator', title: 'Motivador Principal' },
+        { id: 'secondary-motivator', title: 'Motivador Secundário' }
+      ];
+      
+      // Adiciona cada seção ao PDF
+      sections.forEach(section => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+        pdf.text(`${section.title}:`, 20, yPosition);
+        yPosition += 10;
+        
+        pdf.setFont(styles.normal.font, styles.normal.style);
+        const contentElement = document.getElementById(section.id);
+        let content = '';
+        
+        if (contentElement) {
+          content = contentElement.textContent || contentElement.innerHTML.replace(/<br\s*\/?>/gi, '\n');
+        }
+        
+        const splitContent = pdf.splitTextToSize(content, 170);
+        pdf.text(splitContent, 25, yPosition);
+        yPosition += splitContent.length * 7 + 15;
+      });
+      
+      pdf.save('perfil-disc.pdf');
+      
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
+    }
   }
 }
+
 // Inicializa o teste quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
   try {
