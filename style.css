@@ -117,3 +117,11 @@ button:disabled {
     padding: 8px 16px;
   }
 }
+
+.question-card {
+  display: none; /* Esconde todas as perguntas inicialmente */
+}
+
+.question-card.active {
+  display: block; /* Mostra apenas a ativa */
+}
