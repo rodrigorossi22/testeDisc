@@ -315,12 +315,12 @@ const profiles = {
 };
 
 const questionsData = [
-  // ... (mantenha todo o array questionsData que você já tem)
+  // ... (mantenha TODAS as 28 perguntas aqui, sem duplicação)
 ];
 
 const profiles = {
-  // ... (mantenha todo o objeto profiles que você já tem)
-};
+  // ... (mantenha TODOS os 4 perfis aqui, sem duplicação)
+];
 
 class DiscTest {
   constructor(questions, profiles) {
@@ -352,7 +352,6 @@ class DiscTest {
   }
   
   renderQuestion() {
-    // Limpa o formulário completamente
     this.formElement.innerHTML = '';
     
     const question = this.questions[this.currentQuestion];
@@ -382,7 +381,6 @@ class DiscTest {
         const value = option.getAttribute('data-value');
         this.answers[this.currentQuestion] = value;
         
-        // Atualiza a seleção visual
         document.querySelectorAll('.answer-option').forEach(opt => {
           opt.classList.remove('selected');
         });
@@ -396,7 +394,6 @@ class DiscTest {
     this.progressBar.style.width = `${progress}%`;
     this.progressText.textContent = `Pergunta ${this.currentQuestion + 1} de ${this.questions.length}`;
     
-    // Atualiza estado dos botões
     this.prevBtn.disabled = this.currentQuestion === 0;
     this.nextBtn.disabled = this.currentQuestion === this.questions.length - 1;
   }
@@ -432,7 +429,6 @@ class DiscTest {
     const top = Object.keys(scores).filter(k => scores[k] === maxScore);
     const selectedProfile = this.profiles[top[0]];
     
-    // Preenche os resultados
     document.getElementById('profile-summary').innerHTML = `
       <strong>${selectedProfile.name}</strong><br>${selectedProfile.summary}
     `;
@@ -443,17 +439,19 @@ class DiscTest {
     document.getElementById('main-motivator').textContent = selectedProfile.mainMotivator;
     document.getElementById('secondary-motivator').textContent = selectedProfile.secondaryMotivator;
     
-    // Mostra a seção de resultados
     this.resultsSection.classList.remove('hidden');
     this.resultsSection.scrollIntoView({ behavior: 'smooth' });
   }
   
   generatePDF() {
-    // ... (mantenha a mesma função generatePDF que você já tem)
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    
+    // ... (implementação da geração de PDF)
   }
 }
 
-// Inicialização quando o DOM estiver pronto
+// Inicialização única
 document.addEventListener('DOMContentLoaded', () => {
   try {
     new DiscTest(questionsData, profiles);
