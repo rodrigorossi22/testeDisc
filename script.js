@@ -364,8 +364,15 @@ class DiscTest {
     
     this.formElement.appendChild(questionDiv);
     this.updateProgress();
-    this.setupOptionListeners();
+    // Adiciona classe especial se for a última pergunta
+  if (this.currentQuestion === this.questions.length - 1) {
+    this.nextBtn.classList.add('finish-btn');
+  } else {
+    this.nextBtn.classList.remove('finish-btn');
   }
+  
+  this.setupOptionListeners();
+}
   
   setupOptionListeners() {
     document.querySelectorAll('.answer-option').forEach(option => {
@@ -407,18 +414,18 @@ class DiscTest {
   }
   
   nextQuestion() {
-    if (this.answers[this.currentQuestion] === null) {
-      alert('Por favor, selecione uma resposta antes de continuar.');
-      return;
-    }
-    
-    if (this.currentQuestion < this.questions.length - 1) {
-      this.currentQuestion++;
-      this.renderQuestion();
-    } else {
-      this.showResults();
-    }
+  if (this.answers[this.currentQuestion] === null) {
+    alert('Por favor, selecione uma resposta antes de continuar.');
+    return;
   }
+  
+  if (this.currentQuestion < this.questions.length - 1) {
+    this.currentQuestion++;
+    this.renderQuestion();
+  } else {
+    this.showResults(); // Isso deve ser chamado ao clicar em "Finalizar"
+  }
+}
   
   showResults() {
     const scores = { D: 0, I: 0, S: 0, C: 0 };
