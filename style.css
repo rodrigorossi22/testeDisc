@@ -125,3 +125,32 @@ button:disabled {
 .question-card.active {
   display: block; /* Mostra apenas a ativa */
 }
+/* Adicione isso ao seu style.css */
+.question-card {
+  display: block; /* Garante que a pergunta atual seja visível */
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.answer-option {
+  padding: 10px 15px;
+  margin: 8px 0;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.answer-option:hover {
+  background: #e9ecef;
+}
+
+.answer-option.selected {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
