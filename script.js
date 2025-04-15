@@ -1,7 +1,6 @@
-console.log("=== INICIANDO TESTE DISC ===");
-console.log("Total de perguntas:", questionsData.length);
-console.log("Perfis carregados:", Object.keys(profiles).length);
+ console.log("=== INICIANDO TESTE DISC ===");
 
+// Dados das perguntas
 const questionsData = [
   {
     "question": "Quando enfrenta um problema inesperado, você tende a:",
@@ -12,6 +11,7 @@ const questionsData = [
       "C": "Revisar todos os detalhes e planejar com precisão."
     }
   },
+
   {
     "question": "Como você prefere trabalhar em equipe?",
     "options": {
@@ -274,7 +274,8 @@ const questionsData = [
     }
   }
 ];
-
+  
+// Perfis DISC
 const profiles = {
   D: {
     name: "Dominante (D)",
@@ -320,7 +321,7 @@ const profiles = {
 
 class DiscTest {
   constructor(questions, profiles) {
-    console.log("Inicializando teste..."); // Debug
+    console.log("Inicializando teste DISC...");
     this.questions = questions;
     this.profiles = profiles;
     this.currentQuestion = 0;
@@ -329,9 +330,8 @@ class DiscTest {
     this.initElements();
     this.renderQuestion();
     this.setupEventListeners();
-  }
- 
-    console.log("Teste DISC inicializado com", questions.length, "perguntas");
+    
+    console.log("Teste DISC pronto com", questions.length, "perguntas");
   }
   
   initElements() {
@@ -344,16 +344,17 @@ class DiscTest {
   }
   
   setupEventListeners() {
-  this.prevBtn.addEventListener('click', () => this.prevQuestion());
-  this.nextBtn.addEventListener('click', () => this.nextQuestion());
-  
-  const pdfBtn = document.getElementById('pdf-btn');
-  if (pdfBtn) {
-    pdfBtn.addEventListener('click', () => this.generatePDF());
-  } else {
-    console.error("Botão PDF não encontrado");
+    this.prevBtn.addEventListener('click', () => this.prevQuestion());
+    this.nextBtn.addEventListener('click', () => this.nextQuestion());
+    
+    // Configura o listener do PDF apenas quando os resultados forem mostrados
+    document.addEventListener('resultsShown', () => {
+      const pdfBtn = document.getElementById('pdf-btn');
+      if (pdfBtn) {
+        pdfBtn.addEventListener('click', () => this.generatePDF());
+      }
+    });
   }
-}
   
   renderQuestion() {
     this.formElement.innerHTML = '';
@@ -376,15 +377,15 @@ class DiscTest {
     
     this.formElement.appendChild(questionDiv);
     this.updateProgress();
-    // Adiciona classe especial se for a última pergunta
-  if (this.currentQuestion === this.questions.length - 1) {
-    this.nextBtn.classList.add('finish-btn');
-  } else {
-    this.nextBtn.classList.remove('finish-btn');
+    
+    if (this.currentQuestion === this.questions.length - 1) {
+      this.nextBtn.classList.add('finish-btn');
+    } else {
+      this.nextBtn.classList.remove('finish-btn');
+    }
+    
+    this.setupOptionListeners();
   }
-  
-  this.setupOptionListeners();
-}
   
   setupOptionListeners() {
     document.querySelectorAll('.answer-option').forEach(option => {
@@ -400,23 +401,19 @@ class DiscTest {
     });
   }
   
- updateProgress() {
-  const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
-  this.progressBar.style.width = `${progress}%`;
-  this.progressText.textContent = `Pergunta ${this.currentQuestion + 1} de ${this.questions.length}`;
-  
-  this.prevBtn.disabled = this.currentQuestion === 0;
-  
-  // Modificação aqui - muda o texto do botão na última pergunta
-  if (this.currentQuestion === this.questions.length - 1) {
-    this.nextBtn.textContent = 'Finalizar';
-    this.nextBtn.innerHTML = '<i class="fas fa-check"></i> Finalizar';
-    this.nextBtn.disabled = false; // Garante que está ativo
-  } else {
-    this.nextBtn.textContent = 'Próxima';
-    this.nextBtn.innerHTML = 'Próxima <i class="fas fa-arrow-right"></i>';
+  updateProgress() {
+    const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
+    this.progressBar.style.width = `${progress}%`;
+    this.progressText.textContent = `Pergunta ${this.currentQuestion + 1} de ${this.questions.length}`;
+    
+    this.prevBtn.disabled = this.currentQuestion === 0;
+    
+    if (this.currentQuestion === this.questions.length - 1) {
+      this.nextBtn.innerHTML = '<i class="fas fa-check"></i> Finalizar';
+    } else {
+      this.nextBtn.innerHTML = 'Próxima <i class="fas fa-arrow-right"></i>';
+    }
   }
-}
   
   prevQuestion() {
     if (this.currentQuestion > 0) {
@@ -426,18 +423,22 @@ class DiscTest {
   }
   
   nextQuestion() {
-  if (this.answers[this.currentQuestion] === null) {
-    alert('Por favor, selecione uma resposta antes de continuar.');
-    return;
+    if (this.answers[this.currentQuestion] === null) {
+      const options = document.querySelectorAll('.answer-option');
+      options.forEach(opt => opt.classList.add('shake'));
+      setTimeout(() => {
+        options.forEach(opt => opt.classList.remove('shake'));
+      }, 500);
+      return;
+    }
+    
+    if (this.currentQuestion < this.questions.length - 1) {
+      this.currentQuestion++;
+      this.renderQuestion();
+    } else {
+      this.showResults();
+    }
   }
-  
-  if (this.currentQuestion < this.questions.length - 1) {
-    this.currentQuestion++;
-    this.renderQuestion();
-  } else {
-    this.showResults(); // Isso deve ser chamado ao clicar em "Finalizar"
-  }
-}
   
   showResults() {
     const scores = { D: 0, I: 0, S: 0, C: 0 };
@@ -446,8 +447,8 @@ class DiscTest {
     });
     
     const maxScore = Math.max(...Object.values(scores));
-    const top = Object.keys(scores).filter(k => scores[k] === maxScore);
-    const selectedProfile = this.profiles[top[0]];
+    const topProfiles = Object.keys(scores).filter(k => scores[k] === maxScore);
+    const selectedProfile = this.profiles[topProfiles[0]];
     
     document.getElementById('profile-summary').innerHTML = `
       <strong>${selectedProfile.name}</strong><br>${selectedProfile.summary}
@@ -461,81 +462,109 @@ class DiscTest {
     
     this.resultsSection.classList.remove('hidden');
     this.resultsSection.scrollIntoView({ behavior: 'smooth' });
+    
+    // Dispara evento para notificar que os resultados estão prontos
+    document.dispatchEvent(new Event('resultsShown'));
   }
   
-
-generatePDF() {
-  try {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
+  generatePDF() {
+    if (!window.jspdf) {
+      console.error("Biblioteca jsPDF não carregada");
+      alert("Recurso de PDF não disponível. Por favor, recarregue a página.");
+      return;
+    }
     
-    // Configurações iniciais
-    pdf.setFont('helvetica');
-    pdf.setFontSize(20);
-    pdf.text('Seu Perfil DISC - Consultoria Rodrigo Rossi', 105, 20, { align: 'center' });
-    
-    // Adicionar data
-    pdf.setFontSize(10);
-    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
-    
-    // Adicionar conteúdo do perfil
-    pdf.setFontSize(12);
-    let yPosition = 45;
-    
-    // Perfil principal
-    const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
-    const profileText = document.getElementById('profile-summary').lastChild.textContent;
-    
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(profileTitle, 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(12);
-    const splitText = pdf.splitTextToSize(profileText, 170);
-    pdf.text(splitText, 20, yPosition);
-    yPosition += splitText.length * 7 + 15;
-    
-    // Adicionar outras seções
-    const sections = [
-      'Pontos Fortes', 'Pontos de Desenvolvimento',
-      'Relações Interpessoais', 'Tomada de Decisão',
-      'Motivador Principal', 'Motivador Secundário'
-    ];
-    
-    sections.forEach(section => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
+    try {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
       
-      const contentElement = document.getElementById(section.toLowerCase().replace(' ', '-'));
-      const content = contentElement ? contentElement.textContent : '';
+      // Configurações de estilo
+      const styles = {
+        title: { size: 20, font: 'helvetica', style: 'bold' },
+        subtitle: { size: 16, font: 'helvetica', style: 'bold' },
+        normal: { size: 12, font: 'helvetica', style: 'normal' },
+        small: { size: 10, font: 'helvetica', style: 'normal' }
+      };
       
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`${section}:`, 20, yPosition);
-      yPosition += 7;
+      // Cabeçalho
+      pdf.setFont(styles.title.font, styles.title.style);
+      pdf.setFontSize(styles.title.size);
+      pdf.text('Seu Perfil DISC - Consultoria Rodrigo Rossi', 105, 20, { align: 'center' });
       
-      pdf.setFont('helvetica', 'normal');
-      const splitContent = pdf.splitTextToSize(content, 170);
-      pdf.text(splitContent, 25, yPosition);
-      yPosition += splitContent.length * 7 + 10;
-    });
-    
-    pdf.save('perfil-disc.pdf');
-  } catch (error) {
-    console.error("Erro ao gerar PDF:", error);
-    alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
+      // Data
+      pdf.setFont(styles.small.font, styles.small.style);
+      pdf.setFontSize(styles.small.size);
+      pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+      
+      // Perfil principal
+      let yPosition = 45;
+      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+      pdf.setFontSize(styles.subtitle.size);
+      pdf.text('Seu Perfil Principal:', 20, yPosition);
+      
+      yPosition += 10;
+      pdf.setFont(styles.normal.font, styles.normal.style);
+      pdf.setFontSize(styles.normal.size);
+      
+      const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
+      const profileText = document.getElementById('profile-summary').lastChild.textContent;
+      
+      pdf.text(profileTitle, 20, yPosition);
+      yPosition += 8;
+      
+      const splitProfileText = pdf.splitTextToSize(profileText, 170);
+      pdf.text(splitProfileText, 20, yPosition);
+      yPosition += splitProfileText.length * 7 + 15;
+      
+      // Seções dos resultados
+      const sections = [
+        { id: 'strengths', title: 'Pontos Fortes' },
+        { id: 'development-areas', title: 'Áreas de Desenvolvimento' },
+        { id: 'interpersonal-relations', title: 'Relações Interpessoais' },
+        { id: 'decision-making', title: 'Tomada de Decisão' },
+        { id: 'main-motivator', title: 'Motivador Principal' },
+        { id: 'secondary-motivator', title: 'Motivador Secundário' }
+      ];
+      
+      // Adiciona cada seção ao PDF
+      sections.forEach(section => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+        pdf.text(`${section.title}:`, 20, yPosition);
+        yPosition += 10;
+        
+        pdf.setFont(styles.normal.font, styles.normal.style);
+        const contentElement = document.getElementById(section.id);
+        let content = '';
+        
+        if (contentElement) {
+          content = contentElement.textContent || contentElement.innerHTML.replace(/<br\s*\/?>/gi, '\n');
+        }
+        
+        const splitContent = pdf.splitTextToSize(content, 170);
+        pdf.text(splitContent, 25, yPosition);
+        yPosition += splitContent.length * 7 + 15;
+      });
+      
+      pdf.save('perfil-disc.pdf');
+      
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
+    }
   }
 }
 
-// Inicialização única
+// Inicializa o teste quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
   try {
     new DiscTest(questionsData, profiles);
   } catch (error) {
-    console.error("Erro ao inicializar:", error);
-    alert("Erro ao carregar o teste. Recarregue a página.");
+    console.error("Erro ao inicializar o teste:", error);
+    alert("Erro ao carregar o teste. Por favor, recarregue a página.");
   }
 });
