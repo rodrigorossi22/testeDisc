@@ -312,15 +312,20 @@ class DiscTest {
     this.nextBtn.addEventListener('click', () => this.nextQuestion());
     document.getElementById('pdf-btn').addEventListener('click', () => this.generatePDF());
   }
-  
- renderQuestion() {
+  renderQuestion() {
+  // Limpa o formulário
   this.formElement.innerHTML = '';
   
+  // Cria o container da pergunta atual
   const question = this.questions[this.currentQuestion];
   const questionDiv = document.createElement('div');
-  questionDiv.className = 'question-card active'; // Adicionei 'active'
+  questionDiv.className = 'question-card';
+  questionDiv.dataset.questionIndex = this.currentQuestion;
+  
+  // Adiciona a pergunta
   questionDiv.innerHTML = `<h3>${this.currentQuestion + 1}. ${question.question}</h3>`;
   
+  // Adiciona as opções de resposta
   Object.entries(question.options).forEach(([key, text]) => {
     const optionId = `q${this.currentQuestion}-${key}`;
     const isChecked = this.answers[this.currentQuestion] === key;
@@ -333,6 +338,26 @@ class DiscTest {
       </div>
     `;
   });
+  
+  // Adiciona ao formulário
+  this.formElement.appendChild(questionDiv);
+  
+  // Atualiza a barra de progresso
+  this.updateProgress();
+  
+  // Configura os eventos das opções
+  document.querySelectorAll('.answer-option').forEach(option => {
+    option.addEventListener('click', () => {
+      const value = option.getAttribute('data-value');
+      this.answers[this.currentQuestion] = value;
+      // Não precisa re-renderizar, apenas atualiza a seleção
+      document.querySelectorAll('.answer-option').forEach(opt => {
+        opt.classList.toggle('selected', opt === option);
+      });
+    });
+  });
+}
+
   
   this.formElement.appendChild(questionDiv);
   this.updateProgress();
