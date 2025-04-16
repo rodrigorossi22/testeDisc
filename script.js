@@ -2,6 +2,8 @@
 try {
   window.jsPDF = window.jspdf.jsPDF;
   console.log("jsPDF inicializado com sucesso");
+} catch (e) {
+  console.error("Erro ao inicializar jsPDF:", e);
 }
 
 // Inicializa o teste quando o DOM estiver carregado
@@ -24,9 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error("Falha na inicialização:", error);
     alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
   }
-}); catch (e) {
-  console.error("Erro ao inicializar jsPDF:", e);
-}
+});
 
 // Adicione no início do arquivo, antes de tudo
 console.log("=== INICIANDO TESTE DISC ===");
