@@ -483,179 +483,100 @@ initElements() {
     document.dispatchEvent(new Event('resultsShown'));
   }
 
-generatePDF() {
-  if (!window.jspdf) {
-    console.error("Biblioteca jsPDF não carregada");
-    alert("Recurso de PDF não disponível. Por favor, recarregue a página.");
-    return;
+  generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  const styles = {
+    title: { size: 18, font: 'helvetica', style: 'bold' },
+    subtitle: { size: 14, font: 'helvetica', style: 'bold' },
+    normal: { size: 11, font: 'helvetica', style: 'normal' }
+  };
+
+  let y = 20;
+
+  // Título
+  pdf.setFont(styles.title.font, styles.title.style);
+  pdf.setFontSize(styles.title.size);
+  pdf.text('Relatório Completo do Teste DISC', 105, y, { align: 'center' });
+
+  y += 10;
+  pdf.setFont(styles.normal.font, styles.normal.style);
+  pdf.setFontSize(styles.normal.size);
+  pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
+
+  y += 15;
+
+  // Parte 1: Respostas
+  pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+  pdf.text('Questionário Respondido:', 20, y);
+  y += 10;
+
+  this.questions.forEach((q, index) => {
+    const ansKey = this.answers[index];
+    if (!ansKey) return;
+
+    const qText = `${index + 1}. ${q.question}`;
+    const aText = `Resposta: ${q.options[ansKey]}`;
+
+    const qLines = pdf.splitTextToSize(qText, 170);
+    const aLines = pdf.splitTextToSize(aText, 170);
+
+    if (y + (qLines.length + aLines.length) * 6 > 280) {
+      pdf.addPage();
+      y = 20;
+    }
+
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.text(qLines, 20, y);
+    y += qLines.length * 6;
+    pdf.text(aLines, 20, y);
+    y += aLines.length * 6 + 5;
+  });
+
+  // Parte 2: Perfil DISC
+  if (y + 60 > 280) {
+    pdf.addPage();
+    y = 20;
   }
 
-  try {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    
-    // Configurações de estilo
-    const styles = {
-      title: { size: 20, font: 'helvetica', style: 'bold' },
-      subtitle: { size: 16, font: 'helvetica', style: 'bold' },
-      normal: { size: 12, font: 'helvetica', style: 'normal' },
-      small: { size: 10, font: 'helvetica', style: 'normal' },
-      highlight: { size: 12, font: 'helvetica', style: 'bolditalic' }
-    };
-    
-    // Cabeçalho
-    pdf.setFont(styles.title.font, styles.title.style);
-    pdf.setFontSize(styles.title.size);
-    pdf.text('Relatório Completo do Teste DISC', 105, 20, { align: 'center' });
-    
-    pdf.setFont(styles.small.font, styles.small.style);
-    pdf.setFontSize(styles.small.size);
-    pdf.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 105, 30, { align: 'center' });
-    
-    // Seção de Questionário Respondido
-    let yPosition = 45;
+  const sections = [
+    { title: 'Resultado do Perfil DISC:', id: 'profile-summary' },
+    { title: 'Pontos Fortes:', id: 'strengths' },
+    { title: 'Pontos de Desenvolvimento:', id: 'development-areas' },
+    { title: 'Relações Interpessoais:', id: 'interpersonal-relations' },
+    { title: 'Tomada de Decisão:', id: 'decision-making' },
+    { title: 'Motivador Principal:', id: 'main-motivator' },
+    { title: 'Motivador Secundário:', id: 'secondary-motivator' }
+  ];
+
+  sections.forEach(section => {
+    const el = document.getElementById(section.id);
+    if (!el) return;
+
+    let content = el.textContent || '';
+    if (!content.trim()) return;
+
+    const titleLines = pdf.splitTextToSize(section.title, 170);
+    const contentLines = pdf.splitTextToSize(content, 170);
+
+    if (y + (titleLines.length + contentLines.length) * 6 > 280) {
+      pdf.addPage();
+      y = 20;
+    }
+
     pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Questionário Respondido:', 20, yPosition);
-    yPosition += 10;
-    
+    pdf.text(titleLines, 20, y);
+    y += titleLines.length * 6;
+
     pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    
-    // Adiciona cada pergunta e resposta
-    this.questions.forEach((question, index) => {
-      // Verifica se precisa de nova página
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      const answerValue = this.answers[index];
-      const answerText = answerValue ? question.options[answerValue] : "Não respondida";
-      
-      // Pergunta
-      pdf.setFont(styles.normal.font, styles.normal.style);
-      const questionText = `${index + 1}. ${question.question}`;
-      const splitQuestion = pdf.splitTextToSize(questionText, 170);
-      pdf.text(splitQuestion, 20, yPosition);
-      yPosition += splitQuestion.length * 7;
-      
-      // Resposta (destaque)
-      pdf.setFont(styles.highlight.font, styles.highlight.style);
-      const answerLine = `➤ Resposta: ${answerText}`;
-      pdf.text(answerLine, 25, yPosition);
-      yPosition += 10;
-      
-      // Espaçamento entre perguntas
-      yPosition += 5;
-      
-      // Linha divisória
-      if (index < this.questions.length - 1) {
-        pdf.setDrawColor(200, 200, 200);
-        pdf.line(20, yPosition, 190, yPosition);
-        yPosition += 10;
-      }
-    });
-    
-    // Adiciona página para o perfil
-    pdf.addPage();
-    yPosition = 20;
-    
-    // Perfil principal
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Resultado do Perfil DISC:', 20, yPosition);
-    yPosition += 10;
-    
-    // Resultado do perfil (mantenha o código original desta parte)
-    const profileTitle = document.getElementById('profile-summary').firstChild.textContent;
-    const profileText = document.getElementById('profile-summary').lastChild.textContent;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    pdf.text(profileTitle, 20, yPosition);
-    yPosition += 8;
-    
-    const splitProfileText = pdf.splitTextToSize(profileText, 170);
-    pdf.text(splitProfileText, 20, yPosition);
-    yPosition += splitProfileText.length * 7 + 15;
-    
-    // Seções dos resultados (mantenha o código original desta parte)
-    const sections = [
-      { id: 'strengths', title: 'Pontos Fortes' },
-      { id: 'development-areas', title: 'Pontos de Desenvolvimento' },
-      { id: 'interpersonal-relations', title: 'Relações Interpessoais' },
-      { id: 'decision-making', title: 'Tomada de Decisão' },
-      { id: 'main-motivator', title: 'Motivador Principal' },
-      { id: 'secondary-motivator', title: 'Motivador Secundário' }
-    ];
-    
-    sections.forEach(section => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-      
-      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-      pdf.text(`${section.title}:`, 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFont(styles.normal.font, styles.normal.style);
-      const contentElement = document.getElementById(section.id);
-      let content = '';
-      
-      if (contentElement) {
-        content = contentElement.innerHTML.replace(/<br\s*\/?>/gi, '; ');
-      }
-      
-      const splitContent = pdf.splitTextToSize(content, 170);
-      pdf.text(splitContent, 25, yPosition);
-      yPosition += splitContent.length * 7 + 15;
-    });
-    // Adiciona as perguntas e respostas ao final
-if (yPosition > 250) {
-  pdf.addPage();
-  yPosition = 20;
+    pdf.text(contentLines, 20, y);
+    y += contentLines.length * 6 + 5;
+  });
+
+  pdf.save('perfil-disc.pdf');
 }
 
-pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-pdf.setFontSize(styles.subtitle.size);
-pdf.text('Resumo das Respostas:', 20, yPosition);
-yPosition += 10;
-
-pdf.setFont(styles.normal.font, styles.normal.style);
-pdf.setFontSize(styles.normal.size);
-
-this.questions.forEach((q, index) => {
-  const answerKey = this.answers[index];
-  if (!answerKey) return;
-
-  const questionText = `${index + 1}. ${q.question}`;
-  const answerText = `Resposta: ${q.options[answerKey]}`;
-
-  const questionLines = pdf.splitTextToSize(questionText, 170);
-  const answerLines = pdf.splitTextToSize(answerText, 170);
-
-  // Verifica espaço restante na página
-  if (yPosition + (questionLines.length + answerLines.length) * 7 > 270) {
-    pdf.addPage();
-    yPosition = 20;
-  }
-
-  pdf.text(questionLines, 20, yPosition);
-  yPosition += questionLines.length * 7;
-  pdf.text(answerLines, 20, yPosition);
-  yPosition += answerLines.length * 7 + 10;
-});
-
-    pdf.save(`perfil-disc-${new Date().toISOString().slice(0,10)}.pdf`);
-    
-  } catch (error) {
-    console.error("Erro ao gerar PDF:", error);
-    alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.");
-  }
-}
-  
 }
 
 // Inicializa o teste quando o DOM estiver carregado
