@@ -552,3 +552,4 @@ class DiscTest {
       
     console.log("Percentuais calculados:", this.percentages);
     console.log("Tipos ordenados:", this.sortedTypes);
+  }
