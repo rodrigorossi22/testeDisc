@@ -1,19 +1,7 @@
-window.jsPDF = window.jspdf.jsPDF;
-// Adicione no início do arquivo, antes de tudo
-console.log("=== INICIANDO TESTE DISC ===");
-
-// Fallback para erro crítico
-window.addEventListener('error', function(e) {
-  console.error("Erro global capturado:", e.error);
-  document.body.innerHTML = `
-    <div style="text-align: center; padding: 50px; font-family: Arial;">
-      <h1>Erro ao carregar o teste</h1>
-      <p>Pedimos desculpas pelo inconveniente. O suporte já foi notificado.</p>
-      <button onclick="location.reload()" style="padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Tentar Novamente
-      </button>
-    </div>
-  `;
+// Inicialização do jsPDF
+try {
+  window.jsPDF = window.jspdf.jsPDF;
+  console.log("jsPDF inicializado com sucesso");
 }
 
 // Inicializa o teste quando o DOM estiver carregado
@@ -36,7 +24,26 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error("Falha na inicialização:", error);
     alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
   }
-}););
+}); catch (e) {
+  console.error("Erro ao inicializar jsPDF:", e);
+}
+
+// Adicione no início do arquivo, antes de tudo
+console.log("=== INICIANDO TESTE DISC ===");
+
+// Fallback para erro crítico
+window.addEventListener('error', function(e) {
+  console.error("Erro global capturado:", e.error);
+  document.body.innerHTML = `
+    <div style="text-align: center; padding: 50px; font-family: Arial;">
+      <h1>Erro ao carregar o teste</h1>
+      <p>Pedimos desculpas pelo inconveniente. O suporte já foi notificado.</p>
+      <button onclick="location.reload()" style="padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Tentar Novamente
+      </button>
+    </div>
+  `;
+});
 
 // 30 Perguntas selecionadas para o teste DISC
 const questionsData = [
@@ -49,75 +56,6 @@ const questionsData = [
       "S": "Analiso cuidadosamente antes de agir, preferindo abordagens testadas",
       "C": "Pesquiso todas as informações possíveis para encontrar a solução mais precisa"
     }
-    
-    // Adiciona página com as respostas
-    pdf.addPage();
-    y = 20;
-    
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Resumo das Respostas', 105, y, { align: 'center' });
-    y += 15;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    
-    // Cria uma tabela com as respostas e os percentuais
-    pdf.text('Tipo', 30, y);
-    pdf.text('Respostas', 80, y);
-    pdf.text('Percentual', 140, y);
-    y += 8;
-    
-    // Linha separadora
-    pdf.line(20, y - 3, 190, y - 3);
-    y += 5;
-    
-    // Contagem das respostas por tipo
-    const counts = { D: 0, I: 0, S: 0, C: 0 };
-    this.answers.forEach(answer => {
-      if (answer) counts[answer]++;
-    });
-    
-    // Lista das respostas
-    Object.entries(counts).forEach(([type, count]) => {
-      pdf.text(type, 30, y);
-      pdf.text(`${count} de ${this.answers.length}`, 80, y);
-      pdf.text(`${this.percentages[type]}%`, 140, y);
-      y += 10;
-    });
-    
-    // Informações sobre as respostas
-    y += 10;
-    pdf.text('Suas respostas para cada pergunta:', 20, y);
-    y += 10;
-    
-    this.questions.forEach((q, index) => {
-      const answer = this.answers[index];
-      if (!answer) return;
-      
-      const questionText = q.question;
-      const answerText = q.options[answer];
-      
-      if (y > 250) {
-        pdf.addPage();
-        y = 20;
-      }
-      
-      pdf.setFont(styles.normal.font, 'bold');
-      const questionLines = pdf.splitTextToSize(`${index + 1}. ${questionText}`, 170);
-      pdf.text(questionLines, 20, y);
-      y += questionLines.length * 6;
-      
-      pdf.setFont(styles.normal.font, 'normal');
-      const answerLines = pdf.splitTextToSize(`Resposta: ${answerText}`, 170);
-      pdf.text(answerLines, 20, y);
-      y += answerLines.length * 6 + 3;
-    });
-    
-    // Salva o PDF
-    pdf.save('perfil-disc.pdf');
-  }
-}
   },
 
   // Liderança e Trabalho em Equipe
@@ -529,7 +467,16 @@ class DiscTest {
     document.addEventListener('resultsShown', () => {
       const pdfBtn = document.getElementById('pdf-btn');
       if (pdfBtn) {
-        pdfBtn.addEventListener('click', () => this.generatePDF());
+        pdfBtn.addEventListener('click', () => {
+          try {
+            console.log("Iniciando geração de PDF...");
+            this.generatePDF();
+            console.log("PDF gerado com sucesso!");
+          } catch (error) {
+            console.error("Erro ao gerar PDF:", error);
+            alert("Erro ao gerar o PDF. Por favor, tente novamente.");
+          }
+        });
       }
     });
   }
@@ -707,195 +654,166 @@ class DiscTest {
     document.dispatchEvent(new Event('resultsShown'));
   }
   
-  // Método para gerar o PDF
+  // Método para gerar o PDF - Adaptado da versão que funcionava
   generatePDF() {
-    // Defina as variáveis necessárias localmente
-    const primaryType = this.sortedTypes[0];
-    const secondaryType = this.sortedTypes[1];
-    const primaryProfile = this.profiles[primaryType];
-    const secondaryProfile = this.profiles[secondaryType];
-    
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-
-    const styles = {
-      title: { size: 18, font: 'helvetica', style: 'bold' },
-      subtitle: { size: 14, font: 'helvetica', style: 'bold' },
-      normal: { size: 11, font: 'helvetica', style: 'normal' }
-    };
-
-    let y = 20;
-
-    // Cabeçalho
-    pdf.setFont(styles.title.font, styles.title.style);
-    pdf.setFontSize(styles.title.size);
-    pdf.text('Resultado do Perfil DISC', 105, y, { align: 'center' });
-    y += 10;
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
-    y += 15;
-    
-    // Barras de distribuição
-    Object.entries(this.percentages).forEach(([type, percentage]) => {
-      pdf.text(`${type}: ${percentage}%`, 20, y);
-      
-      // Desenha uma barra representando a porcentagem
-      pdf.setFillColor(200, 200, 200);
-      pdf.rect(40, y - 5, 100, 6, 'F');
-      
-      // Cor da barra de acordo com o tipo
-      const colors = {
-        D: [231, 76, 60], // Vermelho
-        I: [241, 196, 15], // Amarelo
-        S: [46, 204, 113], // Verde
-        C: [52, 152, 219]  // Azul
-      };
-      
-      pdf.setFillColor(...colors[type]);
-      pdf.rect(40, y - 5, percentage, 6, 'F');
-      
-      y += 10;
-    });
-    
-    y += 5;
-    
-    // Outras seções
-    const sections = [
-      { title: 'Relações Interpessoais', content: primaryProfile.relations.replace(/<br>/g, '\n') },
-      { title: 'Tomada de Decisão', content: primaryProfile.decisions.replace(/<br>/g, '\n') },
-      { title: 'Motivador Principal', content: primaryProfile.mainMotivator },
-      { title: 'Motivador Secundário', content: secondaryProfile.mainMotivator }
-    ];
-    
-    for (const section of sections) {
-      if (y > 250) {
-        pdf.addPage();
-        y = 20;
+    console.log("Método generatePDF iniciado");
+    try {
+      // Verificar se jsPDF está disponível
+      if (!window.jspdf || !window.jsPDF) {
+        console.error("Biblioteca jsPDF não está disponível");
+        throw new Error("Biblioteca jsPDF não está disponível");
       }
       
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+
+      const styles = {
+        title: { size: 18, font: 'helvetica', style: 'bold' },
+        subtitle: { size: 14, font: 'helvetica', style: 'bold' },
+        normal: { size: 11, font: 'helvetica', style: 'normal' }
+      };
+
+      let y = 20;
+
+      // Cabeçalho
+      pdf.setFont(styles.title.font, styles.title.style);
+      pdf.setFontSize(styles.title.size);
+      pdf.text('Resultado do Perfil DISC', 105, y, { align: 'center' });
+      y += 10;
+      pdf.setFont(styles.normal.font, styles.normal.style);
+      pdf.setFontSize(styles.normal.size);
+      pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
+      y += 15;
+
+      // Pega os textos do DOM - Esta abordagem funciona melhor
+      const profileHTML = document.getElementById('profile-summary')?.innerHTML || '';
+      
+      // Extraindo o texto do perfil primário
+      const primaryMatch = profileHTML.match(/<strong>Perfil Primário: ([^<]+)<\/strong>/);
+      const primaryTitle = primaryMatch ? primaryMatch[1] : '';
+      
+      // Extraindo o texto do perfil secundário
+      const secondaryMatch = profileHTML.match(/<strong>Perfil Secundário: ([^<]+)<\/strong>/);
+      const secondaryTitle = secondaryMatch ? secondaryMatch[1] : '';
+      
+      // Extraindo descrições dos perfis (simplificado)
+      const primaryDescMatch = primaryTitle ? profileHTML.split(primaryTitle)[1].split('<br><br>')[0].replace(/<[^>]+>/g, '') : '';
+      const secondaryDescMatch = secondaryTitle ? profileHTML.split(secondaryTitle)[1].split('<div class="profile-distribution">')[0].replace(/<[^>]+>/g, '') : '';
+      
+      const strengths = document.getElementById('strengths')?.innerText || '';
+      const devAreas = document.getElementById('development-areas')?.innerText || '';
+      const relations = document.getElementById('interpersonal-relations')?.innerText || '';
+      const decision = document.getElementById('decision-making')?.innerText || '';
+      const motivator1 = document.getElementById('main-motivator')?.innerText || '';
+      const motivator2 = document.getElementById('secondary-motivator')?.innerText || '';
+
+      // Contagem das respostas para o gráfico
+      const counts = { D: 0, I: 0, S: 0, C: 0 };
+      this.answers.forEach(answer => {
+        if (answer) counts[answer]++;
+      });
+      
+      // Gráfico de barras e percentuais
       pdf.setFont(styles.subtitle.font, styles.subtitle.style);
       pdf.setFontSize(styles.subtitle.size);
-      pdf.text(section.title, 20, y);
-      y += 8;
+      pdf.text('Distribuição do Perfil DISC', 20, y);
+      y += 10;
       
       pdf.setFont(styles.normal.font, styles.normal.style);
       pdf.setFontSize(styles.normal.size);
       
-      if (section.content.includes('\n')) {
-        const items = section.content.split('\n');
-        items.forEach(item => {
-          if (item.trim()) {
-            const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
-            
-            if (y + itemLines.length * 6 > 280) {
-              pdf.addPage();
-              y = 20;
-            }
-            
-            pdf.text(itemLines, 20, y);
-            y += itemLines.length * 6;
-          }
-        });
-      } else {
-        const contentLines = pdf.splitTextToSize(section.content, 170);
+      // Desenhar barras de percentuais
+      Object.entries(this.percentages).forEach(([type, percentage]) => {
+        pdf.text(`${type}: ${percentage}%`, 20, y);
         
-        if (y + contentLines.length * 6 > 280) {
-          pdf.addPage();
-          y = 20;
-        }
+        // Barra de fundo
+        pdf.setFillColor(200, 200, 200);
+        pdf.rect(40, y - 5, 100, 6, 'F');
         
-        pdf.text(contentLines, 20, y);
-        y += contentLines.length * 6;
-      }
+        // Cor da barra de acordo com o tipo
+        const colors = {
+          D: [231, 76, 60], // Vermelho
+          I: [241, 196, 15], // Amarelo
+          S: [46, 204, 113], // Verde
+          C: [52, 152, 219]  // Azul
+        };
+        
+        pdf.setFillColor(...colors[type]);
+        pdf.rect(40, y - 5, percentage, 6, 'F');
+        
+        y += 10;
+      });
       
       y += 5;
-    }
-    
-    // Resultado Principal
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text(`Perfil Primário: ${primaryProfile.name} (${this.percentages[primaryType]}%)`, 20, y);
-    y += 10;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    const profileTextLines = pdf.splitTextToSize(primaryProfile.summary, 170);
-    pdf.text(profileTextLines, 20, y);
-    y += profileTextLines.length * 6 + 5;
-    
-    // Perfil Secundário
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text(`Perfil Secundário: ${secondaryProfile.name} (${this.percentages[secondaryType]}%)`, 20, y);
-    y += 10;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    const secondaryTextLines = pdf.splitTextToSize(secondaryProfile.summary, 170);
-    pdf.text(secondaryTextLines, 20, y);
-    y += secondaryTextLines.length * 6 + 10;
-    
-    // Pontos fortes (do perfil primário)
-    if (y > 250) {
-      pdf.addPage();
-      y = 20;
-    }
-    
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Pontos Fortes', 20, y);
-    y += 8;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    
-    // Converter HTML para texto simples
-    const strengths = primaryProfile.strengths.replace(/<br>/g, '\n').split('\n');
-    strengths.forEach(item => {
-      if (item.trim()) {
-        const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
-        
-        if (y + itemLines.length * 6 > 280) {
+
+      // Lista dos blocos de conteúdo
+      const blocks = [
+        { title: 'Perfil Primário:', text: `${primaryTitle} - ${primaryDescMatch}` },
+        { title: 'Perfil Secundário:', text: `${secondaryTitle} - ${secondaryDescMatch}` },
+        { title: 'Pontos Fortes:', text: strengths },
+        { title: 'Pontos de Desenvolvimento:', text: devAreas },
+        { title: 'Relações Interpessoais:', text: relations },
+        { title: 'Tomada de Decisão:', text: decision },
+        { title: 'Motivador Principal:', text: motivator1 },
+        { title: 'Motivador Secundário:', text: motivator2 }
+      ];
+
+      for (const block of blocks) {
+        if (y > 260) {
           pdf.addPage();
           y = 20;
         }
-        
-        pdf.text(itemLines, 20, y);
-        y += itemLines.length * 6;
+
+        if (block.title) {
+          pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+          pdf.text(block.title, 20, y);
+          y += 8;
+        }
+
+        pdf.setFont(styles.normal.font, styles.normal.style);
+        const textLines = pdf.splitTextToSize(block.text, 170);
+        pdf.text(textLines, 20, y);
+        y += textLines.length * 6 + 5;
       }
-    });
-    
-    y += 5;
-    
-    // Áreas de desenvolvimento
-    if (y > 250) {
-      pdf.addPage();
-      y = 20;
-    }
-    
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Pontos de Desenvolvimento', 20, y);
-    y += 8;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    
-    // Converter HTML para texto simples
-    const development = primaryProfile.development.replace(/<br>/g, '\n').split('\n');
-    development.forEach(item => {
-      if (item.trim()) {
-        const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
-        
-        if (y + itemLines.length * 6 > 280) {
+
+      // Resumo das Respostas
+      if (y > 240) {
+        pdf.addPage();
+        y = 20;
+      }
+
+      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+      pdf.text('Resumo das Respostas:', 20, y);
+      y += 10;
+
+      this.questions.forEach((q, index) => {
+        const ansKey = this.answers[index];
+        if (!ansKey) return;
+
+        const question = `${index + 1}. ${q.question}`;
+        const answer = `Resposta: ${q.options[ansKey]}`;
+
+        const questionLines = pdf.splitTextToSize(question, 170);
+        const answerLines = pdf.splitTextToSize(answer, 170);
+
+        if (y + (questionLines.length + answerLines.length) * 6 > 270) {
           pdf.addPage();
           y = 20;
         }
-        
-        pdf.text(itemLines, 20, y);
-        y += itemLines.length * 6;
-      }
-    });
-    
-    y += 5;
+
+        pdf.setFont(styles.normal.font, styles.normal.style);
+        pdf.text(questionLines, 20, y);
+        y += questionLines.length * 6;
+
+        pdf.text(answerLines, 20, y);
+        y += answerLines.length * 6 + 5;
+      });
+
+      // Salva o PDF
+      pdf.save('perfil-disc.pdf');
+      console.log("PDF salvo com sucesso");
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      alert("Erro ao gerar o PDF: " + error.message);
+    }
+  }
