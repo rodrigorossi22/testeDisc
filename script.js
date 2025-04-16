@@ -483,7 +483,7 @@ initElements() {
     document.dispatchEvent(new Event('resultsShown'));
   }
 
-  generatePDF() {
+ generatePDF() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
@@ -495,83 +495,84 @@ initElements() {
 
   let y = 20;
 
-  // Título
+  // Cabeçalho
   pdf.setFont(styles.title.font, styles.title.style);
   pdf.setFontSize(styles.title.size);
-  pdf.text('Relatório Completo do Teste DISC', 105, y, { align: 'center' });
-
+  pdf.text('Resultado do Perfil DISC', 105, y, { align: 'center' });
   y += 10;
   pdf.setFont(styles.normal.font, styles.normal.style);
   pdf.setFontSize(styles.normal.size);
   pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
-
   y += 15;
 
-  // Parte 1: Respostas
+  // Pega os textos do DOM
+  const profileText = document.getElementById('profile-summary')?.innerText || '';
+  const strengths = document.getElementById('strengths')?.innerText || '';
+  const devAreas = document.getElementById('development-areas')?.innerText || '';
+  const relations = document.getElementById('interpersonal-relations')?.innerText || '';
+  const decision = document.getElementById('decision-making')?.innerText || '';
+  const motivator1 = document.getElementById('main-motivator')?.innerText || '';
+  const motivator2 = document.getElementById('secondary-motivator')?.innerText || '';
+
+  const blocks = [
+    { title: '', text: profileText },
+    { title: 'Pontos Fortes:', text: strengths },
+    { title: 'Pontos de Desenvolvimento:', text: devAreas },
+    { title: 'Relações Interpessoais:', text: relations },
+    { title: 'Tomada de Decisão:', text: decision },
+    { title: 'Motivador Principal:', text: motivator1 },
+    { title: 'Motivador Secundário:', text: motivator2 }
+  ];
+
+  for (const block of blocks) {
+    if (y > 260) {
+      pdf.addPage();
+      y = 20;
+    }
+
+    if (block.title) {
+      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+      pdf.text(block.title, 20, y);
+      y += 8;
+    }
+
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    const textLines = pdf.splitTextToSize(block.text, 170);
+    pdf.text(textLines, 20, y);
+    y += textLines.length * 6 + 5;
+  }
+
+  // Resumo das Respostas
+  if (y > 240) {
+    pdf.addPage();
+    y = 20;
+  }
+
   pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-  pdf.text('Questionário Respondido:', 20, y);
+  pdf.text('Resumo das Respostas:', 20, y);
   y += 10;
 
   this.questions.forEach((q, index) => {
     const ansKey = this.answers[index];
     if (!ansKey) return;
 
-    const qText = `${index + 1}. ${q.question}`;
-    const aText = `Resposta: ${q.options[ansKey]}`;
+    const question = `${index + 1}. ${q.question}`;
+    const answer = `Resposta: ${q.options[ansKey]}`;
 
-    const qLines = pdf.splitTextToSize(qText, 170);
-    const aLines = pdf.splitTextToSize(aText, 170);
+    const questionLines = pdf.splitTextToSize(question, 170);
+    const answerLines = pdf.splitTextToSize(answer, 170);
 
-    if (y + (qLines.length + aLines.length) * 6 > 280) {
+    if (y + (questionLines.length + answerLines.length) * 6 > 270) {
       pdf.addPage();
       y = 20;
     }
 
     pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.text(qLines, 20, y);
-    y += qLines.length * 6;
-    pdf.text(aLines, 20, y);
-    y += aLines.length * 6 + 5;
-  });
+    pdf.text(questionLines, 20, y);
+    y += questionLines.length * 6;
 
-  // Parte 2: Perfil DISC
-  if (y + 60 > 280) {
-    pdf.addPage();
-    y = 20;
-  }
-
-  const sections = [
-    { title: 'Resultado do Perfil DISC:', id: 'profile-summary' },
-    { title: 'Pontos Fortes:', id: 'strengths' },
-    { title: 'Pontos de Desenvolvimento:', id: 'development-areas' },
-    { title: 'Relações Interpessoais:', id: 'interpersonal-relations' },
-    { title: 'Tomada de Decisão:', id: 'decision-making' },
-    { title: 'Motivador Principal:', id: 'main-motivator' },
-    { title: 'Motivador Secundário:', id: 'secondary-motivator' }
-  ];
-
-  sections.forEach(section => {
-    const el = document.getElementById(section.id);
-    if (!el) return;
-
-    let content = el.textContent || '';
-    if (!content.trim()) return;
-
-    const titleLines = pdf.splitTextToSize(section.title, 170);
-    const contentLines = pdf.splitTextToSize(content, 170);
-
-    if (y + (titleLines.length + contentLines.length) * 6 > 280) {
-      pdf.addPage();
-      y = 20;
-    }
-
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.text(titleLines, 20, y);
-    y += titleLines.length * 6;
-
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.text(contentLines, 20, y);
-    y += contentLines.length * 6 + 5;
+    pdf.text(answerLines, 20, y);
+    y += answerLines.length * 6 + 5;
   });
 
   pdf.save('perfil-disc.pdf');
