@@ -350,14 +350,14 @@ class DiscTest {
     console.log("Teste DISC pronto com", questions.length, "perguntas");
   }
   
-  initElements() {
-    this.formElement = document.getElementById('disc-form');
-    this.prevBtn = document.getElementById('prev-btn');
-    this.nextBtn = document.getElementById('next-btn');
-    this.progressBar = document.getElementById('progress-bar');
-    this.progressText = document.getElementById('progress-text');
-    this.resultsSection = document.getElementById('results');
-  }
+initElements() {
+  this.formElement = document.getElementById('disc-form');
+  this.prevBtn = document.getElementById('prev-btn');
+  this.nextBtn = document.getElementById('next-btn');
+  this.progressBar = document.getElementById('progress-bar'); // Elemento correto
+  this.progressText = document.getElementById('progress-text');
+  this.resultsSection = document.getElementById('results');
+}
   
   setupEventListeners() {
     this.prevBtn.addEventListener('click', () => this.prevQuestion());
