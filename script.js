@@ -1,3 +1,6 @@
+// Início do arquivo - Logs iniciais
+console.log("=== INICIANDO TESTE DISC ===");
+
 // Inicialização do jsPDF
 try {
   window.jsPDF = window.jspdf.jsPDF;
@@ -5,31 +8,6 @@ try {
 } catch (e) {
   console.error("Erro ao inicializar jsPDF:", e);
 }
-
-// Inicializa o teste quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    console.log("DOM carregado, iniciando teste...");
-    
-    // Verifica elementos essenciais
-    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-bar', 'progress-text', 'results'];
-    essentialElements.forEach(id => {
-      if (!document.getElementById(id)) {
-        throw new Error(`Elemento essencial #${id} não encontrado`);
-      }
-    });
-
-    // Inicializa o teste
-    const discTest = new DiscTest(questionsData, profiles);
-    
-  } catch (error) {
-    console.error("Falha na inicialização:", error);
-    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
-  }
-});
-
-// Adicione no início do arquivo, antes de tudo
-console.log("=== INICIANDO TESTE DISC ===");
 
 // Fallback para erro crítico
 window.addEventListener('error', function(e) {
@@ -45,7 +23,7 @@ window.addEventListener('error', function(e) {
   `;
 });
 
-// 30 Perguntas selecionadas para o teste DISC
+// Definição dos dados de perguntas
 const questionsData = [
   // Abordagem a Desafios e Problemas
   {
@@ -388,7 +366,7 @@ const questionsData = [
     }
   }
 ];
-  
+
 // Perfis DISC
 const profiles = {
   D: {
@@ -433,6 +411,7 @@ const profiles = {
   }
 };
 
+// Definição da classe DiscTest
 class DiscTest {
   constructor(questions, profiles) {
     console.log("Inicializando teste DISC...");
@@ -687,8 +666,8 @@ class DiscTest {
 
       // Pega os textos do DOM - Esta abordagem funciona melhor
       const profileHTML = document.getElementById('profile-summary')?.innerHTML || '';
-      
-      // Extraindo o texto do perfil primário
+  
+        // Extraindo o texto do perfil primário
       const primaryMatch = profileHTML.match(/<strong>Perfil Primário: ([^<]+)<\/strong>/);
       const primaryTitle = primaryMatch ? primaryMatch[1] : '';
       
@@ -817,3 +796,26 @@ class DiscTest {
       alert("Erro ao gerar o PDF: " + error.message);
     }
   }
+}
+
+// Inicialização do teste quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    console.log("DOM carregado, iniciando teste...");
+    
+    // Verifica elementos essenciais
+    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-bar', 'progress-text', 'results'];
+    essentialElements.forEach(id => {
+      if (!document.getElementById(id)) {
+        throw new Error(`Elemento essencial #${id} não encontrado`);
+      }
+    });
+
+    // Inicializa o teste
+    const discTest = new DiscTest(questionsData, profiles);
+    
+  } catch (error) {
+    console.error("Falha na inicialização:", error);
+    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
+  }
+});
