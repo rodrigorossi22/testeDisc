@@ -506,7 +506,10 @@ initElements() {
   y += 15;
 
   // Pega os textos do DOM
-  const profileText = document.getElementById('profile-summary')?.innerText || '';
+  const profileHTML = document.getElementById('profile-summary')?.innerHTML || '';
+const [titleRaw, ...descParts] = profileHTML.split('<br>');
+const profileTitle = titleRaw?.replace(/<[^>]+>/g, '').trim() || '';
+const profileDesc = descParts.join(' ').replace(/<[^>]+>/g, '').trim();
   const strengths = document.getElementById('strengths')?.innerText || '';
   const devAreas = document.getElementById('development-areas')?.innerText || '';
   const relations = document.getElementById('interpersonal-relations')?.innerText || '';
