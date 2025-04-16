@@ -16,277 +16,346 @@ window.addEventListener('error', function(e) {
   `;
 });
 
-// Dados das perguntas
+// 30 Perguntas selecionadas para o teste DISC
 const questionsData = [
+  // Abordagem a Desafios e Problemas
   {
-    "question": "Quando enfrenta um problema inesperado, você tende a:",
+    "question": "Como você reage a desafios?",
     "options": {
-      "D": "Agir rapidamente para resolver o problema.",
-      "I": "Buscar apoio e envolver outras pessoas para encontrar soluções.",
-      "S": "Manter a calma e analisar cuidadosamente antes de agir.",
-      "C": "Revisar todos os detalhes e planejar com precisão."
+      "D": "Encaro de frente e procuro resultados imediatos",
+      "I": "Vejo como oportunidade para motivar os outros e encontrar soluções criativas",
+      "S": "Analiso cuidadosamente antes de agir, preferindo abordagens testadas",
+      "C": "Pesquiso todas as informações possíveis para encontrar a solução mais precisa"
     }
   },
 
+  // Liderança e Trabalho em Equipe
   {
-    "question": "Como você prefere trabalhar em equipe?",
+    "question": "Em uma equipe, meu papel natural é:",
     "options": {
-      "D": "Tomando a liderança e definindo as tarefas.",
-      "I": "Motivando e inspirando os outros.",
-      "S": "Colaborando harmoniosamente e apoiando os colegas.",
-      "C": "Seguindo processos claros e garantindo qualidade."
+      "D": "Líder e tomador de decisões",
+      "I": "Motivador e entusiasta",
+      "S": "Apoio estável e conciliador",
+      "C": "Executor metódico"
     }
   },
+  
+  // Comunicação e Interação
   {
-    "question": "Em uma reunião importante, você:",
+    "question": "Em uma conversa, você geralmente:",
     "options": {
-      "D": "Foca em resultados e decisões rápidas.",
-      "I": "Tenta criar um ambiente descontraído e participativo.",
-      "S": "Escuta atentamente e busca consenso.",
-      "C": "Apresenta dados e fatos organizados."
+      "D": "Vai direto ao ponto, sendo objetivo e focado no resultado",
+      "I": "Fala animadamente, contando histórias e envolvendo as pessoas",
+      "S": "Escuta mais do que fala, demonstrando atenção ao outro",
+      "C": "Apresenta informações detalhadas e precisas sobre o assunto"
     }
   },
+  
+  // Ritmo de Trabalho e Adaptabilidade
   {
-    "question": "O que mais te motiva no trabalho ou nos estudos?",
+    "question": "Como você lida com mudanças?",
     "options": {
-      "D": "Superar desafios e alcançar metas ambiciosas.",
-      "I": "Criar conexões e interagir com as pessoas.",
-      "S": "Contribuir para um ambiente estável e cooperativo.",
-      "C": "Realizar tarefas com precisão e excelência."
+      "D": "Adapto-me rapidamente e busco as novas oportunidades",
+      "I": "Entusiasmo-me com as novidades e motivo os outros a aceitar a mudança",
+      "S": "Prefiro mudanças graduais e com tempo para me adaptar",
+      "C": "Questiono os motivos e implicações antes de aceitar a mudança"
     }
   },
+  
+  // Ritmo de Trabalho
   {
-    "question": "Como você lida com críticas ou feedbacks?",
+    "question": "Seu ritmo de trabalho geralmente é:",
     "options": {
-      "D": "Aceita apenas se forem construtivos e úteis.",
-      "I": "Reflete sobre o feedback, mas busca apoio emocional.",
-      "S": "Escuta pacientemente e ajusta suas ações.",
-      "C": "Analisa criticamente para entender o contexto."
+      "D": "Rápido e dinâmico, sempre buscando novos desafios",
+      "I": "Variado e flexível, com múltiplos projetos simultâneos",
+      "S": "Constante e previsível, com foco em qualidade consistente",
+      "C": "Metódico e sistemático, com atenção aos detalhes"
     }
   },
+  
+  // Organização e Normas
   {
-    "question": "Em uma festa ou evento social, você geralmente:",
+    "question": "Seu espaço de trabalho ou ambiente pessoal tende a ser:",
     "options": {
-      "D": "Assume a liderança e conhece novas pessoas.",
-      "I": "É o centro das atenções e anima o ambiente.",
-      "S": "Observa primeiro antes de interagir.",
-      "C": "Prefere conversas profundas e significativas."
+      "D": "Funcional e organizado para maximizar a eficiência",
+      "I": "Colorido e dinâmico, com vários projetos acontecendo simultaneamente",
+      "S": "Confortável e acolhedor, com objetos pessoais significativos",
+      "C": "Meticulosamente organizado, com tudo em seu devido lugar"
     }
   },
+  
+  // Regras e Procedimentos
   {
-    "question": "Quando precisa tomar uma decisão importante, você:",
+    "question": "Em relação a regras e procedimentos, você:",
     "options": {
-      "D": "Confia no instinto e age rapidamente.",
-      "I": "Consulta amigos ou colegas para ter diferentes perspectivas.",
-      "S": "Pensa nas consequências para evitar conflitos.",
-      "C": "Reúne dados e faz uma análise lógica."
+      "D": "Segue apenas as que fazem sentido para alcançar resultados eficientes",
+      "I": "Prefere flexibilidade e encontra formas criativas de interpretar as regras",
+      "S": "Respeita-as e valoriza a estabilidade que elas proporcionam",
+      "C": "Segue-as rigorosamente e espera que os outros também o façam"
     }
   },
+  
+  // Motivação e Valores
   {
-    "question": "Qual ambiente de trabalho ou estudo você prefere?",
+    "question": "O que mais te motiva em um projeto?",
     "options": {
-      "D": "Competitivo, onde posso mostrar meu desempenho.",
-      "I": "Dinâmico, com muita interação e energia.",
-      "S": "Estável, onde posso manter rotinas e previsibilidade.",
-      "C": "Estruturado, com regras claras e processos bem definidos."
+      "D": "Alcançar resultados concretos e superar desafios",
+      "I": "A oportunidade de conhecer pessoas e trabalhar em equipe",
+      "S": "Contribuir para um ambiente estável e cooperativo",
+      "C": "Produzir um trabalho de alta qualidade e precisão"
     }
   },
+  
+  // Tomada de Decisão
   {
-    "question": "Como você reage a mudanças repentinas?",
+    "question": "Qual frase melhor descreve sua forma de tomar decisões?",
     "options": {
-      "D": "Vejo como uma oportunidade para agir com rapidez.",
-      "I": "Me adapto facilmente e tento torná-las divertidas.",
-      "S": "Preciso de tempo para me ajustar.",
-      "C": "Avalio cuidadosamente os impactos antes de aceitar."
+      "D": "Vamos decidir e agir agora",
+      "I": "Vamos discutir as possibilidades com todos",
+      "S": "Vamos considerar como isso afetará a todos",
+      "C": "Vamos analisar todas as alternativas cuidadosamente"
     }
   },
+  
+  // Base para Decisões
   {
-    "question": "O que mais valoriza nas relações pessoais?",
+    "question": "Minhas decisões são mais baseadas em:",
     "options": {
-      "D": "Respeito e admiração pelos meus resultados.",
-      "I": "Alegria, diversão e momentos memoráveis.",
-      "S": "Lealdade, confiança e apoio mútuo.",
-      "C": "Honestidade, transparência e compromisso."
+      "D": "Resultados e eficiência",
+      "I": "Emoções e relacionamentos",
+      "S": "Valores pessoais e harmonia",
+      "C": "Dados e lógica"
     }
   },
+  
+  // Trabalho sob Pressão
   {
-    "question": "Quando está sob pressão, você tende a:",
+    "question": "Quando estou sob pressão:",
     "options": {
-      "D": "Agir de forma assertiva e assumir o controle.",
-      "I": "Procurar apoio emocional e incentivar os outros.",
-      "S": "Manter a calma e evitar confrontos.",
-      "C": "Seguir protocolos para garantir que tudo esteja certo."
+      "D": "Tomo o controle",
+      "I": "Busco apoio emocional",
+      "S": "Fico mais sensível e cauteloso",
+      "C": "Me fecho e analiso internamente"
     }
   },
+  
+  // Ambiente Social
   {
-    "question": "O que você mais gosta em aprender algo novo?",
+    "question": "Em eventos sociais, você normalmente:",
     "options": {
-      "D": "Aplicar rapidamente e ver resultados concretos.",
-      "I": "Compartilhar o que aprendeu com outras pessoas.",
-      "S": "Entender como isso pode trazer equilíbrio à minha vida.",
-      "C": "Dominar todos os detalhes e garantir precisão."
+      "D": "Prefere conversas objetivas e estabelecer contatos estratégicos",
+      "I": "Conhece muitas pessoas novas e energiza o ambiente",
+      "S": "Conversa tranquilamente com poucas pessoas, criando conexões mais profundas",
+      "C": "Observa a dinâmica do ambiente antes de se envolver em conversas"
     }
   },
+  
+  // Planejamento
   {
-    "question": "Como você prefere receber instruções?",
+    "question": "Ao planejar um projeto, você prioriza:",
     "options": {
-      "D": "Diretas e objetivas, sem muitos detalhes.",
-      "I": "De forma entusiasmada e motivadora.",
-      "S": "Com paciência e espaço para perguntas.",
-      "C": "Organizadas e com informações completas."
+      "D": "Estabelecer metas claras e prazos curtos",
+      "I": "Formar uma equipe entusiasmada e discutir ideias criativas",
+      "S": "Criar um plano passo a passo que todos possam seguir",
+      "C": "Elaborar um plano detalhado considerando todos os possíveis obstáculos"
     }
   },
+  
+  // Reconhecimento
   {
-    "question": "O que mais te frustra no trabalho ou nos estudos?",
+    "question": "Quando recebe um elogio, você prefere ser reconhecido por:",
     "options": {
-      "D": "Falta de desafios ou metas ambiciosas.",
-      "I": "Ambientes monótonos e sem interação.",
-      "S": "Conflitos ou mudanças bruscas.",
-      "C": "Falta de organização ou imprecisão."
+      "D": "Sua capacidade de liderança e resultados alcançados",
+      "I": "Sua criatividade e habilidade de inspirar os outros",
+      "S": "Sua lealdade e capacidade de trabalhar bem em equipe",
+      "C": "Sua atenção aos detalhes e trabalho de alta qualidade"
     }
   },
+  
+  // Legado
   {
-    "question": "Como você avalia sua capacidade de persuasão?",
+    "question": "Como você gostaria de ser lembrado pelos outros?",
     "options": {
-      "D": "Sou direto(a) e objetivo(a).",
-      "I": "Uso criatividade e entusiasmo.",
-      "S": "Construo confiança ao longo do tempo.",
-      "C": "Baseio-me em fatos e dados."
+      "D": "Como alguém determinado que alcançou resultados importantes",
+      "I": "Como alguém inspirador que trouxe alegria para a vida dos outros",
+      "S": "Como alguém confiável que sempre esteve presente quando necessário",
+      "C": "Como alguém competente que fez trabalhos de excelente qualidade"
     }
   },
+  
+  // Conflitos
   {
-    "question": "O que mais te motiva a alcançar seus objetivos?",
+    "question": "Quando precisa resolver um conflito, você normalmente:",
     "options": {
-      "D": "Reconhecimento e status.",
-      "I": "Relacionamentos e colaboração.",
-      "S": "Harmonia e estabilidade.",
-      "C": "Precisão e excelência."
+      "D": "Encara diretamente a situação e busca resolver de forma rápida e objetiva",
+      "I": "Usa seu carisma para aliviar a tensão e encontrar um meio-termo aceitável",
+      "S": "Busca entender todos os pontos de vista e encontrar uma solução harmoniosa",
+      "C": "Analisa as causas do conflito para propor uma solução baseada em fatos"
     }
   },
+  
+  // Feedback
   {
-    "question": "Como você lida com prazos apertados?",
+    "question": "Ao dar feedback para alguém, você:",
     "options": {
-      "D": "Priorizo tarefas e agilizo o processo.",
-      "I": "Motivo a equipe para superar o desafio.",
-      "S": "Mantenho a calma e sigo o planejamento.",
-      "C": "Verifico cada detalhe para evitar erros."
+      "D": "É direto e objetivo, apontando claramente o que precisa melhorar",
+      "I": "Começa com elogios e apresenta as críticas de forma positiva e motivadora",
+      "S": "É gentil e cuidadoso, evitando ser muito duro ou magoar a pessoa",
+      "C": "Fornece análises detalhadas e específicas baseadas em fatos observáveis"
     }
   },
+  
+  // Comunicação Pública
   {
-    "question": "O que mais te atrai em um projeto?",
+    "question": "Quando falo em público:",
     "options": {
-      "D": "A possibilidade de liderar e inovar.",
-      "I": "A chance de interagir e motivar pessoas.",
-      "S": "A previsibilidade e segurança.",
-      "C": "A estrutura e organização."
+      "D": "Sou direto e assertivo",
+      "I": "Me comunico com entusiasmo e empatia",
+      "S": "Fico nervoso, prefiro conversar individualmente",
+      "C": "Sou mais reservado, mas me preparo muito"
     }
   },
+  
+  // Reação ao Fracasso
   {
-    "question": "Como você reage a situações de risco?",
+    "question": "Minha reação ao fracasso:",
     "options": {
-      "D": "Encaro como uma oportunidade de crescimento.",
-      "I": "Procuro apoio para avaliar os prós e contras.",
-      "S": "Evito riscos desnecessários.",
-      "C": "Analiso cuidadosamente antes de agir."
+      "D": "Uso como aprendizado e sigo",
+      "I": "Fico abalado, mas tento me animar",
+      "S": "Me culpo e reflito bastante",
+      "C": "Reavalio tudo e fico em silêncio"
     }
   },
+  
+  // Pontos Fortes
   {
-    "question": "O que mais valoriza em um líder?",
+    "question": "Minhas maiores forças são:",
     "options": {
-      "D": "Decisão e assertividade.",
-      "I": "Carisma e capacidade de inspirar.",
-      "S": "Empatia e paciência.",
-      "C": "Organização e atenção aos detalhes."
+      "D": "Iniciativa e decisão",
+      "I": "Entusiasmo e carisma",
+      "S": "Paciência e empatia",
+      "C": "Análise e precisão"
     }
   },
+  
+  // Percepção Externa
   {
-    "question": "Como você lida com conflitos interpessoais?",
+    "question": "Sou percebido como:",
     "options": {
-      "D": "Enfrento diretamente para resolver.",
-      "I": "Busco mediar e promover entendimento.",
-      "S": "Evito confrontos para manter a harmonia.",
-      "C": "Analiso o contexto para propor soluções."
+      "D": "Determinado e direto",
+      "I": "Alegre e comunicativo",
+      "S": "Tranquilo e confiável",
+      "C": "Calado e analítico"
     }
   },
+  
+  // Fontes de Incômodo
   {
-    "question": "O que mais te motiva em um ambiente de trabalho?",
+    "question": "O que mais te incomoda?",
     "options": {
-      "D": "Metas desafiadoras e reconhecimento.",
-      "I": "Interação e colaboração com a equipe.",
-      "S": "Estabilidade e previsibilidade.",
-      "C": "Processos claros e organização."
+      "D": "Falta de ação ou lentidão",
+      "I": "Pessoas fechadas ou pessimistas",
+      "S": "Conflitos e mudanças bruscas",
+      "C": "Falta de método ou desorganização"
     }
   },
+  
+  // Ambiente Ideal
   {
-    "question": "Como você avalia sua capacidade de lidar com o estresse?",
+    "question": "Em um ambiente ideal de trabalho:",
     "options": {
-      "D": "Sou resiliente e me adapto rapidamente.",
-      "I": "Busco apoio para lidar com a frustração.",
-      "S": "Mantenho a calma e evito reações impulsivas.",
-      "C": "Planejo estratégias para gerenciar o estresse."
+      "D": "Sou desafiado e tenho autonomia",
+      "I": "Posso interagir e criar com liberdade",
+      "S": "Existe segurança e previsibilidade",
+      "C": "Há organização e regras claras"
     }
   },
+  
+  // Preferência de Tarefas
   {
-    "question": "O que mais te frustra em um ambiente de trabalho?",
+    "question": "Gosto mais de tarefas que:",
     "options": {
-      "D": "Falta de autonomia ou liberdade.",
-      "I": "Ambientes isolados ou pouco interativos.",
-      "S": "Conflitos ou falta de harmonia.",
-      "C": "Desorganização ou imprecisão."
+      "D": "São urgentes e competitivas",
+      "I": "Envolvem contato com pessoas",
+      "S": "Me permitem trabalhar com constância",
+      "C": "Exigem atenção a detalhes"
     }
   },
+  
+  // Prazos e Compromissos
   {
-    "question": "Como você define seu estilo de comunicação?",
+    "question": "Em relação a prazos e compromissos, você:",
     "options": {
-      "D": "Direto, objetivo e focado em resultados.",
-      "I": "Animado, entusiasmado e criativo.",
-      "S": "Calmo, empático e paciente.",
-      "C": "Detalhista, organizado e preciso."
+      "D": "Cumpre-os sempre que são importantes para seus objetivos principais",
+      "I": "Pode se distrair com novas oportunidades, às vezes precisando de lembretes",
+      "S": "É confiável e consistente, raramente deixa de cumprir o combinado",
+      "C": "É extremamente pontual e organizado, planejando-se com antecedência"
     }
   },
+  
+  // Novos Grupos
   {
-    "question": "O que mais te atrai em uma nova oportunidade?",
+    "question": "Em um grupo novo, você:",
     "options": {
-      "D": "Desafios e chances de crescimento.",
-      "I": "Possibilidades de interação e networking.",
-      "S": "Estabilidade e segurança.",
-      "C": "Organização e clareza nos processos."
+      "D": "Assume logo a liderança",
+      "I": "Faz piadas e quebra o gelo",
+      "S": "Observa antes de se envolver",
+      "C": "Analisa as dinâmicas do grupo"
     }
   },
+  
+  // Situações de Crise
   {
-    "question": "Como você lida com feedback negativo?",
+    "question": "Em uma situação de crise, você costuma:",
     "options": {
-      "D": "Aceito apenas se for relevante e útil.",
-      "I": "Procuro apoio para lidar com a frustração.",
-      "S": "Reflito calmamente e ajusto minhas ações.",
-      "C": "Analiso criticamente para entender o contexto."
+      "D": "Agir rapidamente, tomando decisões firmes para resolver o problema",
+      "I": "Comunicar-se abertamente, mantendo o ânimo e envolvendo as pessoas na solução",
+      "S": "Manter a calma e garantir que todos estejam bem enquanto resolve o problema metodicamente",
+      "C": "Avaliar todas as informações disponíveis para encontrar a solução mais eficaz"
     }
   },
+  
+  // Autodescrição
   {
-    "question": "O que mais valoriza em uma equipe?",
+    "question": "Me vejo como:",
     "options": {
-      "D": "Eficiência e resultados rápidos.",
-      "I": "Energia positiva e colaboração.",
-      "S": "Harmonia e confiança mútua.",
-      "C": "Precisão e atenção aos detalhes."
+      "D": "Corajoso e direto",
+      "I": "Criativo e entusiasmado",
+      "S": "Cuidadoso e acolhedor",
+      "C": "Organizado e lógico"
     }
   },
+  
+  // Fonte de Energia
   {
-    "question": "Como você avalia sua capacidade de adaptar-se a novas situações?",
+    "question": "Eu me sinto mais energizado quando:",
     "options": {
-      "D": "Sou flexível e me adapto rapidamente.",
-      "I": "Busco apoio para facilitar a transição.",
-      "S": "Prefiro manter a rotina sempre que possível.",
-      "C": "Analiso cuidadosamente antes de me adaptar."
+      "D": "Estou superando metas",
+      "I": "Estou rodeado de pessoas",
+      "S": "Estou ajudando os outros",
+      "C": "Estou sozinho(a), refletindo e planejando"
     }
   },
+  
+  // Perspectiva Pessoal
   {
-    "question": "O que mais te motiva a buscar crescimento pessoal?",
+    "question": "Qual frase te define?",
     "options": {
-      "D": "Alcançar metas ambiciosas e ser reconhecido(a).",
-      "I": "Criar conexões e inspirar outras pessoas.",
-      "S": "Promover harmonia e equilíbrio na vida.",
-      "C": "Aperfeiçoar habilidades e garantir precisão."
+      "D": "Feito é melhor que perfeito",
+      "I": "O caminho se faz caminhando",
+      "S": "Devagar e sempre",
+      "C": "Se vale a pena fazer, vale a pena fazer bem"
+    }
+  },
+  
+  // Medo Principal
+  {
+    "question": "Seu maior medo é:",
+    "options": {
+      "D": "Ser controlado ou limitado",
+      "I": "Ser ignorado ou rejeitado",
+      "S": "Perder a segurança ou harmonia",
+      "C": "Falhar por falta de preparo"
     }
   }
 ];
@@ -342,6 +411,8 @@ class DiscTest {
     this.profiles = profiles;
     this.currentQuestion = 0;
     this.answers = Array(questions.length).fill(null);
+    this.percentages = {}; // Armazenar percentuais
+    this.sortedTypes = []; // Armazenar tipos ordenados por predominância
     
     this.initElements();
     this.renderQuestion();
@@ -350,14 +421,14 @@ class DiscTest {
     console.log("Teste DISC pronto com", questions.length, "perguntas");
   }
   
-initElements() {
-  this.formElement = document.getElementById('disc-form');
-  this.prevBtn = document.getElementById('prev-btn');
-  this.nextBtn = document.getElementById('next-btn');
-  this.progressBar = document.getElementById('progress-bar'); // Elemento correto
-  this.progressText = document.getElementById('progress-text');
-  this.resultsSection = document.getElementById('results');
-}
+  initElements() {
+    this.formElement = document.getElementById('disc-form');
+    this.prevBtn = document.getElementById('prev-btn');
+    this.nextBtn = document.getElementById('next-btn');
+    this.progressBar = document.getElementById('progress-bar');
+    this.progressText = document.getElementById('progress-text');
+    this.resultsSection = document.getElementById('results');
+  }
   
   setupEventListeners() {
     this.prevBtn.addEventListener('click', () => this.prevQuestion());
@@ -452,155 +523,32 @@ initElements() {
       this.currentQuestion++;
       this.renderQuestion();
     } else {
+      this.calculateResults();
       this.showResults();
     }
   }
   
-  showResults() {
-    const scores = { D: 0, I: 0, S: 0, C: 0 };
+  // Novo método para calcular os resultados
+  calculateResults() {
+    // Contagem das respostas
+    const counts = { D: 0, I: 0, S: 0, C: 0 };
     this.answers.forEach(answer => {
-      if (answer) scores[answer]++;
+      if (answer) counts[answer]++;
     });
     
-    const maxScore = Math.max(...Object.values(scores));
-    const topProfiles = Object.keys(scores).filter(k => scores[k] === maxScore);
-    const selectedProfile = this.profiles[topProfiles[0]];
+    // Calcula os percentuais
+    const total = this.answers.length;
+    this.percentages = {
+      D: Math.round((counts.D / total) * 100),
+      I: Math.round((counts.I / total) * 100),
+      S: Math.round((counts.S / total) * 100),
+      C: Math.round((counts.C / total) * 100)
+    };
     
-    document.getElementById('profile-summary').innerHTML = `
-      <strong>${selectedProfile.name}</strong><br>${selectedProfile.summary}
-    `;
-    document.getElementById('strengths').innerHTML = selectedProfile.strengths;
-    document.getElementById('development-areas').innerHTML = selectedProfile.development;
-    document.getElementById('interpersonal-relations').innerHTML = selectedProfile.relations;
-    document.getElementById('decision-making').innerHTML = selectedProfile.decisions;
-    document.getElementById('main-motivator').textContent = selectedProfile.mainMotivator;
-    document.getElementById('secondary-motivator').textContent = selectedProfile.secondaryMotivator;
-    
-    this.resultsSection.classList.remove('hidden');
-    this.resultsSection.scrollIntoView({ behavior: 'smooth' });
-    
-    // Dispara evento para notificar que os resultados estão prontos
-    document.dispatchEvent(new Event('resultsShown'));
-  }
-
- generatePDF() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  const styles = {
-    title: { size: 18, font: 'helvetica', style: 'bold' },
-    subtitle: { size: 14, font: 'helvetica', style: 'bold' },
-    normal: { size: 11, font: 'helvetica', style: 'normal' }
-  };
-
-  let y = 20;
-
-  // Cabeçalho
-  pdf.setFont(styles.title.font, styles.title.style);
-  pdf.setFontSize(styles.title.size);
-  pdf.text('Resultado do Perfil DISC', 105, y, { align: 'center' });
-  y += 10;
-  pdf.setFont(styles.normal.font, styles.normal.style);
-  pdf.setFontSize(styles.normal.size);
-  pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
-  y += 15;
-
-  // Pega os textos do DOM
-  const profileHTML = document.getElementById('profile-summary')?.innerHTML || '';
-const [titleRaw, ...descParts] = profileHTML.split('<br>');
-const profileTitle = titleRaw?.replace(/<[^>]+>/g, '').trim() || '';
-const profileDesc = descParts.join(' ').replace(/<[^>]+>/g, '').trim();
-  const strengths = document.getElementById('strengths')?.innerText || '';
-  const devAreas = document.getElementById('development-areas')?.innerText || '';
-  const relations = document.getElementById('interpersonal-relations')?.innerText || '';
-  const decision = document.getElementById('decision-making')?.innerText || '';
-  const motivator1 = document.getElementById('main-motivator')?.innerText || '';
-  const motivator2 = document.getElementById('secondary-motivator')?.innerText || '';
-
-  const blocks = [
-    { title: '', text: profileText },
-    { title: 'Pontos Fortes:', text: strengths },
-    { title: 'Pontos de Desenvolvimento:', text: devAreas },
-    { title: 'Relações Interpessoais:', text: relations },
-    { title: 'Tomada de Decisão:', text: decision },
-    { title: 'Motivador Principal:', text: motivator1 },
-    { title: 'Motivador Secundário:', text: motivator2 }
-  ];
-
-  for (const block of blocks) {
-    if (y > 260) {
-      pdf.addPage();
-      y = 20;
-    }
-
-    if (block.title) {
-      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-      pdf.text(block.title, 20, y);
-      y += 8;
-    }
-
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    const textLines = pdf.splitTextToSize(block.text, 170);
-    pdf.text(textLines, 20, y);
-    y += textLines.length * 6 + 5;
-  }
-
-  // Resumo das Respostas
-  if (y > 240) {
-    pdf.addPage();
-    y = 20;
-  }
-
-  pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-  pdf.text('Resumo das Respostas:', 20, y);
-  y += 10;
-
-  this.questions.forEach((q, index) => {
-    const ansKey = this.answers[index];
-    if (!ansKey) return;
-
-    const question = `${index + 1}. ${q.question}`;
-    const answer = `Resposta: ${q.options[ansKey]}`;
-
-    const questionLines = pdf.splitTextToSize(question, 170);
-    const answerLines = pdf.splitTextToSize(answer, 170);
-
-    if (y + (questionLines.length + answerLines.length) * 6 > 270) {
-      pdf.addPage();
-      y = 20;
-    }
-
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.text(questionLines, 20, y);
-    y += questionLines.length * 6;
-
-    pdf.text(answerLines, 20, y);
-    y += answerLines.length * 6 + 5;
-  });
-
-  pdf.save('perfil-disc.pdf');
-}
-
-}
-
-// Inicializa o teste quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    console.log("DOM carregado, iniciando teste...");
-    
-    // Verifica elementos essenciais
-    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-text', 'results'];
-    essentialElements.forEach(id => {
-      if (!document.getElementById(id)) {
-        throw new Error(`Elemento essencial #${id} não encontrado`);
-      }
-    });
-
-    // Inicializa o teste
-    const discTest = new DiscTest(questionsData, profiles);
-    
-  } catch (error) {
-    console.error("Falha na inicialização:", error);
-    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
-  }
-});
+    // Ordena os tipos por percentual (do maior para o menor)
+    this.sortedTypes = Object.entries(this.percentages)
+      .sort((a, b) => b[1] - a[1])
+      .map(entry => entry[0]);
+      
+    console.log("Percentuais calculados:", this.percentages);
+    console.log("Tipos ordenados:", this.sortedTypes);
