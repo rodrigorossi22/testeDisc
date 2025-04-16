@@ -14,7 +14,29 @@ window.addEventListener('error', function(e) {
       </button>
     </div>
   `;
-});
+}
+
+// Inicializa o teste quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    console.log("DOM carregado, iniciando teste...");
+    
+    // Verifica elementos essenciais
+    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-bar', 'progress-text', 'results'];
+    essentialElements.forEach(id => {
+      if (!document.getElementById(id)) {
+        throw new Error(`Elemento essencial #${id} não encontrado`);
+      }
+    });
+
+    // Inicializa o teste
+    const discTest = new DiscTest(questionsData, profiles);
+    
+  } catch (error) {
+    console.error("Falha na inicialização:", error);
+    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
+  }
+}););
 
 // 30 Perguntas selecionadas para o teste DISC
 const questionsData = [
@@ -27,6 +49,75 @@ const questionsData = [
       "S": "Analiso cuidadosamente antes de agir, preferindo abordagens testadas",
       "C": "Pesquiso todas as informações possíveis para encontrar a solução mais precisa"
     }
+    
+    // Adiciona página com as respostas
+    pdf.addPage();
+    y = 20;
+    
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text('Resumo das Respostas', 105, y, { align: 'center' });
+    y += 15;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    
+    // Cria uma tabela com as respostas e os percentuais
+    pdf.text('Tipo', 30, y);
+    pdf.text('Respostas', 80, y);
+    pdf.text('Percentual', 140, y);
+    y += 8;
+    
+    // Linha separadora
+    pdf.line(20, y - 3, 190, y - 3);
+    y += 5;
+    
+    // Contagem das respostas por tipo
+    const counts = { D: 0, I: 0, S: 0, C: 0 };
+    this.answers.forEach(answer => {
+      if (answer) counts[answer]++;
+    });
+    
+    // Lista das respostas
+    Object.entries(counts).forEach(([type, count]) => {
+      pdf.text(type, 30, y);
+      pdf.text(`${count} de ${this.answers.length}`, 80, y);
+      pdf.text(`${this.percentages[type]}%`, 140, y);
+      y += 10;
+    });
+    
+    // Informações sobre as respostas
+    y += 10;
+    pdf.text('Suas respostas para cada pergunta:', 20, y);
+    y += 10;
+    
+    this.questions.forEach((q, index) => {
+      const answer = this.answers[index];
+      if (!answer) return;
+      
+      const questionText = q.question;
+      const answerText = q.options[answer];
+      
+      if (y > 250) {
+        pdf.addPage();
+        y = 20;
+      }
+      
+      pdf.setFont(styles.normal.font, 'bold');
+      const questionLines = pdf.splitTextToSize(`${index + 1}. ${questionText}`, 170);
+      pdf.text(questionLines, 20, y);
+      y += questionLines.length * 6;
+      
+      pdf.setFont(styles.normal.font, 'normal');
+      const answerLines = pdf.splitTextToSize(`Resposta: ${answerText}`, 170);
+      pdf.text(answerLines, 20, y);
+      y += answerLines.length * 6 + 3;
+    });
+    
+    // Salva o PDF
+    pdf.save('perfil-disc.pdf');
+  }
+}
   },
 
   // Liderança e Trabalho em Equipe
@@ -618,6 +709,12 @@ class DiscTest {
   
   // Método para gerar o PDF
   generatePDF() {
+    // Defina as variáveis necessárias localmente
+    const primaryType = this.sortedTypes[0];
+    const secondaryType = this.sortedTypes[1];
+    const primaryProfile = this.profiles[primaryType];
+    const secondaryProfile = this.profiles[secondaryType];
+    
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF();
 
@@ -636,6 +733,8 @@ class DiscTest {
     y += 10;
     pdf.setFont(styles.normal.font, styles.normal.style);
     pdf.setFontSize(styles.normal.size);
+    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
+    y += 15;
     
     // Barras de distribuição
     Object.entries(this.percentages).forEach(([type, percentage]) => {
@@ -660,6 +759,58 @@ class DiscTest {
     });
     
     y += 5;
+    
+    // Outras seções
+    const sections = [
+      { title: 'Relações Interpessoais', content: primaryProfile.relations.replace(/<br>/g, '\n') },
+      { title: 'Tomada de Decisão', content: primaryProfile.decisions.replace(/<br>/g, '\n') },
+      { title: 'Motivador Principal', content: primaryProfile.mainMotivator },
+      { title: 'Motivador Secundário', content: secondaryProfile.mainMotivator }
+    ];
+    
+    for (const section of sections) {
+      if (y > 250) {
+        pdf.addPage();
+        y = 20;
+      }
+      
+      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+      pdf.setFontSize(styles.subtitle.size);
+      pdf.text(section.title, 20, y);
+      y += 8;
+      
+      pdf.setFont(styles.normal.font, styles.normal.style);
+      pdf.setFontSize(styles.normal.size);
+      
+      if (section.content.includes('\n')) {
+        const items = section.content.split('\n');
+        items.forEach(item => {
+          if (item.trim()) {
+            const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
+            
+            if (y + itemLines.length * 6 > 280) {
+              pdf.addPage();
+              y = 20;
+            }
+            
+            pdf.text(itemLines, 20, y);
+            y += itemLines.length * 6;
+          }
+        });
+      } else {
+        const contentLines = pdf.splitTextToSize(section.content, 170);
+        
+        if (y + contentLines.length * 6 > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+        
+        pdf.text(contentLines, 20, y);
+        y += contentLines.length * 6;
+      }
+      
+      y += 5;
+    }
     
     // Resultado Principal
     pdf.setFont(styles.subtitle.font, styles.subtitle.style);
@@ -748,146 +899,3 @@ class DiscTest {
     });
     
     y += 5;
-    
-    // Outras seções
-    const sections = [
-      { title: 'Relações Interpessoais', content: primaryProfile.relations.replace(/<br>/g, '\n') },
-      { title: 'Tomada de Decisão', content: primaryProfile.decisions.replace(/<br>/g, '\n') },
-      { title: 'Motivador Principal', content: primaryProfile.mainMotivator },
-      { title: 'Motivador Secundário', content: secondaryProfile.mainMotivator }
-    ];
-    
-    for (const section of sections) {
-      if (y > 250) {
-        pdf.addPage();
-        y = 20;
-      }
-      
-      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-      pdf.setFontSize(styles.subtitle.size);
-      pdf.text(section.title, 20, y);
-      y += 8;
-      
-      pdf.setFont(styles.normal.font, styles.normal.style);
-      pdf.setFontSize(styles.normal.size);
-      
-      if (section.content.includes('\n')) {
-        const items = section.content.split('\n');
-        items.forEach(item => {
-          if (item.trim()) {
-            const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
-            
-            if (y + itemLines.length * 6 > 280) {
-              pdf.addPage();
-              y = 20;
-            }
-            
-            pdf.text(itemLines, 20, y);
-            y += itemLines.length * 6;
-          }
-        });
-      } else {
-        const contentLines = pdf.splitTextToSize(section.content, 170);
-        
-        if (y + contentLines.length * 6 > 280) {
-          pdf.addPage();
-          y = 20;
-        }
-        
-        pdf.text(contentLines, 20, y);
-        y += contentLines.length * 6;
-      }
-      
-      y += 5;
-    }
-    
-    // Adiciona página com as respostas
-    pdf.addPage();
-    y = 20;
-    
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Resumo das Respostas', 105, y, { align: 'center' });
-    y += 15;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
-    
-    // Cria uma tabela com as respostas e os percentuais
-    pdf.text('Tipo', 30, y);
-    pdf.text('Respostas', 80, y);
-    pdf.text('Percentual', 140, y);
-    y += 8;
-    
-    // Linha separadora
-    pdf.line(20, y - 3, 190, y - 3);
-    y += 5;
-    
-    // Contagem das respostas por tipo
-    const counts = { D: 0, I: 0, S: 0, C: 0 };
-    this.answers.forEach(answer => {
-      if (answer) counts[answer]++;
-    });
-    
-    // Lista das respostas
-    Object.entries(counts).forEach(([type, count]) => {
-      pdf.text(type, 30, y);
-      pdf.text(`${count} de ${this.answers.length}`, 80, y);
-      pdf.text(`${this.percentages[type]}%`, 140, y);
-      y += 10;
-    });
-    
-    // Informações sobre as respostas
-    y += 10;
-    pdf.text('Suas respostas para cada pergunta:', 20, y);
-    y += 10;
-    
-    this.questions.forEach((q, index) => {
-      const answer = this.answers[index];
-      if (!answer) return;
-      
-      const questionText = q.question;
-      const answerText = q.options[answer];
-      
-      if (y > 250) {
-        pdf.addPage();
-        y = 20;
-      }
-      
-      pdf.setFont(styles.normal.font, 'bold');
-      const questionLines = pdf.splitTextToSize(`${index + 1}. ${questionText}`, 170);
-      pdf.text(questionLines, 20, y);
-      y += questionLines.length * 6;
-      
-      pdf.setFont(styles.normal.font, 'normal');
-      const answerLines = pdf.splitTextToSize(`Resposta: ${answerText}`, 170);
-      pdf.text(answerLines, 20, y);
-      y += answerLines.length * 6 + 3;
-    });
-    
-    // Salva o PDF
-    pdf.save('perfil-disc.pdf');
-  }
-}
-
-// Inicializa o teste quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    console.log("DOM carregado, iniciando teste...");
-    
-    // Verifica elementos essenciais
-    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-bar', 'progress-text', 'results'];
-    essentialElements.forEach(id => {
-      if (!document.getElementById(id)) {
-        throw new Error(`Elemento essencial #${id} não encontrado`);
-      }
-    });
-
-    // Inicializa o teste
-    const discTest = new DiscTest(questionsData, profiles);
-    
-  } catch (error) {
-    console.error("Falha na inicialização:", error);
-    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
-  }
-});
