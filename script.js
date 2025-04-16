@@ -612,7 +612,42 @@ generatePDF() {
       pdf.text(splitContent, 25, yPosition);
       yPosition += splitContent.length * 7 + 15;
     });
-    
+    // Adiciona as perguntas e respostas ao final
+if (yPosition > 250) {
+  pdf.addPage();
+  yPosition = 20;
+}
+
+pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+pdf.setFontSize(styles.subtitle.size);
+pdf.text('Resumo das Respostas:', 20, yPosition);
+yPosition += 10;
+
+pdf.setFont(styles.normal.font, styles.normal.style);
+pdf.setFontSize(styles.normal.size);
+
+this.questions.forEach((q, index) => {
+  const answerKey = this.answers[index];
+  if (!answerKey) return;
+
+  const questionText = `${index + 1}. ${q.question}`;
+  const answerText = `Resposta: ${q.options[answerKey]}`;
+
+  const questionLines = pdf.splitTextToSize(questionText, 170);
+  const answerLines = pdf.splitTextToSize(answerText, 170);
+
+  // Verifica espaço restante na página
+  if (yPosition + (questionLines.length + answerLines.length) * 7 > 270) {
+    pdf.addPage();
+    yPosition = 20;
+  }
+
+  pdf.text(questionLines, 20, yPosition);
+  yPosition += questionLines.length * 7;
+  pdf.text(answerLines, 20, yPosition);
+  yPosition += answerLines.length * 7 + 10;
+});
+
     pdf.save(`perfil-disc-${new Date().toISOString().slice(0,10)}.pdf`);
     
   } catch (error) {
