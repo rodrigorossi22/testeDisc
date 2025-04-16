@@ -1,4 +1,19 @@
- console.log("=== INICIANDO TESTE DISC ===");
+// Adicione no início do arquivo, antes de tudo
+console.log("=== INICIANDO TESTE DISC ===");
+
+// Fallback para erro crítico
+window.addEventListener('error', function(e) {
+  console.error("Erro global capturado:", e.error);
+  document.body.innerHTML = `
+    <div style="text-align: center; padding: 50px; font-family: Arial;">
+      <h1>Erro ao carregar o teste</h1>
+      <p>Pedimos desculpas pelo inconveniente. O suporte já foi notificado.</p>
+      <button onclick="location.reload()" style="padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Tentar Novamente
+      </button>
+    </div>
+  `;
+});
 
 // Dados das perguntas
 const questionsData = [
@@ -560,11 +575,28 @@ class DiscTest {
 }
 
 // Inicializa o teste quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
   try {
+    console.log("DOM carregado, iniciando teste...");
+    
+    // Verifica se jsPDF está disponível
+    if (!window.jspdf) {
+      console.warn("jsPDF não carregado - o recurso de PDF não estará disponível");
+    }
+
+    // Verifica elementos essenciais
+    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-text', 'results'];
+    essentialElements.forEach(id => {
+      if (!document.getElementById(id)) {
+        throw new Error(`Elemento essencial #${id} não encontrado`);
+      }
+    });
+
+    // Inicializa o teste
     new DiscTest(questionsData, profiles);
+    
   } catch (error) {
-    console.error("Erro ao inicializar o teste:", error);
-    alert("Erro ao carregar o teste. Por favor, recarregue a página.");
+    console.error("Falha na inicialização:", error);
+    alert("Error ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
   }
 });
