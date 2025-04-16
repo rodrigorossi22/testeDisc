@@ -528,7 +528,7 @@ class DiscTest {
     }
   }
   
-  // Novo método para calcular os resultados
+  // Método para calcular os resultados
   calculateResults() {
     // Contagem das respostas
     const counts = { D: 0, I: 0, S: 0, C: 0 };
@@ -553,3 +553,358 @@ class DiscTest {
     console.log("Percentuais calculados:", this.percentages);
     console.log("Tipos ordenados:", this.sortedTypes);
   }
+  
+  // Método para mostrar os resultados
+  showResults() {
+    // Pega o perfil primário e secundário
+    const primaryType = this.sortedTypes[0];
+    const secondaryType = this.sortedTypes[1];
+    
+    const primaryProfile = this.profiles[primaryType];
+    const secondaryProfile = this.profiles[secondaryType];
+    
+    // Preparar um resumo com ambos os perfis
+    const profileSummary = `
+      <strong>Perfil Primário: ${primaryProfile.name} (${this.percentages[primaryType]}%)</strong><br>
+      ${primaryProfile.summary}<br><br>
+      <strong>Perfil Secundário: ${secondaryProfile.name} (${this.percentages[secondaryType]}%)</strong><br>
+      ${secondaryProfile.summary}
+    `;
+    
+    // Gráfico de distribuição de perfis
+    const profileDistribution = `
+      <div class="profile-distribution">
+        <div class="profile-bar">
+          <div class="profile-label">D (${this.percentages.D}%)</div>
+          <div class="profile-progress">
+            <div class="profile-progress-bar" style="width: ${this.percentages.D}%"></div>
+          </div>
+        </div>
+        <div class="profile-bar">
+          <div class="profile-label">I (${this.percentages.I}%)</div>
+          <div class="profile-progress">
+            <div class="profile-progress-bar" style="width: ${this.percentages.I}%"></div>
+          </div>
+        </div>
+        <div class="profile-bar">
+          <div class="profile-label">S (${this.percentages.S}%)</div>
+          <div class="profile-progress">
+            <div class="profile-progress-bar" style="width: ${this.percentages.S}%"></div>
+          </div>
+        </div>
+        <div class="profile-bar">
+          <div class="profile-label">C (${this.percentages.C}%)</div>
+          <div class="profile-progress">
+            <div class="profile-progress-bar" style="width: ${this.percentages.C}%"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('profile-summary').innerHTML = profileSummary + profileDistribution;
+    document.getElementById('strengths').innerHTML = primaryProfile.strengths;
+    document.getElementById('development-areas').innerHTML = primaryProfile.development;
+    document.getElementById('interpersonal-relations').innerHTML = primaryProfile.relations;
+    document.getElementById('decision-making').innerHTML = primaryProfile.decisions;
+    document.getElementById('main-motivator').textContent = primaryProfile.mainMotivator;
+    document.getElementById('secondary-motivator').textContent = secondaryProfile.mainMotivator;
+    
+    this.resultsSection.classList.remove('hidden');
+    this.resultsSection.scrollIntoView({ behavior: 'smooth' });
+    
+    // Dispara evento para notificar que os resultados estão prontos
+    document.dispatchEvent(new Event('resultsShown'));
+  }
+  
+  // Método para gerar o PDF
+  generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    const styles = {
+      title: { size: 18, font: 'helvetica', style: 'bold' },
+      subtitle: { size: 14, font: 'helvetica', style: 'bold' },
+      normal: { size: 11, font: 'helvetica', style: 'normal' }
+    };
+
+    let y = 20;
+
+    // Cabeçalho
+    pdf.setFont(styles.title.font, styles.title.style);
+    pdf.setFontSize(styles.title.size);
+    pdf.text('Resultado do Perfil DISC', 105, y, { align: 'center' });
+    y += 10;
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    
+    // Barras de distribuição
+    Object.entries(this.percentages).forEach(([type, percentage]) => {
+      pdf.text(`${type}: ${percentage}%`, 20, y);
+      
+      // Desenha uma barra representando a porcentagem
+      pdf.setFillColor(200, 200, 200);
+      pdf.rect(40, y - 5, 100, 6, 'F');
+      
+      // Cor da barra de acordo com o tipo
+      const colors = {
+        D: [231, 76, 60], // Vermelho
+        I: [241, 196, 15], // Amarelo
+        S: [46, 204, 113], // Verde
+        C: [52, 152, 219]  // Azul
+      };
+      
+      pdf.setFillColor(...colors[type]);
+      pdf.rect(40, y - 5, percentage, 6, 'F');
+      
+      y += 10;
+    });
+    
+    y += 5;
+    
+    // Resultado Principal
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text(`Perfil Primário: ${primaryProfile.name} (${this.percentages[primaryType]}%)`, 20, y);
+    y += 10;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    const profileTextLines = pdf.splitTextToSize(primaryProfile.summary, 170);
+    pdf.text(profileTextLines, 20, y);
+    y += profileTextLines.length * 6 + 5;
+    
+    // Perfil Secundário
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text(`Perfil Secundário: ${secondaryProfile.name} (${this.percentages[secondaryType]}%)`, 20, y);
+    y += 10;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    const secondaryTextLines = pdf.splitTextToSize(secondaryProfile.summary, 170);
+    pdf.text(secondaryTextLines, 20, y);
+    y += secondaryTextLines.length * 6 + 10;
+    
+    // Pontos fortes (do perfil primário)
+    if (y > 250) {
+      pdf.addPage();
+      y = 20;
+    }
+    
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text('Pontos Fortes', 20, y);
+    y += 8;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    
+    // Converter HTML para texto simples
+    const strengths = primaryProfile.strengths.replace(/<br>/g, '\n').split('\n');
+    strengths.forEach(item => {
+      if (item.trim()) {
+        const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
+        
+        if (y + itemLines.length * 6 > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+        
+        pdf.text(itemLines, 20, y);
+        y += itemLines.length * 6;
+      }
+    });
+    
+    y += 5;
+    
+    // Áreas de desenvolvimento
+    if (y > 250) {
+      pdf.addPage();
+      y = 20;
+    }
+    
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text('Pontos de Desenvolvimento', 20, y);
+    y += 8;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    
+    // Converter HTML para texto simples
+    const development = primaryProfile.development.replace(/<br>/g, '\n').split('\n');
+    development.forEach(item => {
+      if (item.trim()) {
+        const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
+        
+        if (y + itemLines.length * 6 > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+        
+        pdf.text(itemLines, 20, y);
+        y += itemLines.length * 6;
+      }
+    });
+    
+    y += 5;
+    
+    // Outras seções
+    const sections = [
+      { title: 'Relações Interpessoais', content: primaryProfile.relations.replace(/<br>/g, '\n') },
+      { title: 'Tomada de Decisão', content: primaryProfile.decisions.replace(/<br>/g, '\n') },
+      { title: 'Motivador Principal', content: primaryProfile.mainMotivator },
+      { title: 'Motivador Secundário', content: secondaryProfile.mainMotivator }
+    ];
+    
+    for (const section of sections) {
+      if (y > 250) {
+        pdf.addPage();
+        y = 20;
+      }
+      
+      pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+      pdf.setFontSize(styles.subtitle.size);
+      pdf.text(section.title, 20, y);
+      y += 8;
+      
+      pdf.setFont(styles.normal.font, styles.normal.style);
+      pdf.setFontSize(styles.normal.size);
+      
+      if (section.content.includes('\n')) {
+        const items = section.content.split('\n');
+        items.forEach(item => {
+          if (item.trim()) {
+            const itemLines = pdf.splitTextToSize(`• ${item.trim()}`, 170);
+            
+            if (y + itemLines.length * 6 > 280) {
+              pdf.addPage();
+              y = 20;
+            }
+            
+            pdf.text(itemLines, 20, y);
+            y += itemLines.length * 6;
+          }
+        });
+      } else {
+        const contentLines = pdf.splitTextToSize(section.content, 170);
+        
+        if (y + contentLines.length * 6 > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+        
+        pdf.text(contentLines, 20, y);
+        y += contentLines.length * 6;
+      }
+      
+      y += 5;
+    }
+    
+    // Adiciona página com as respostas
+    pdf.addPage();
+    y = 20;
+    
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text('Resumo das Respostas', 105, y, { align: 'center' });
+    y += 15;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
+    
+    // Cria uma tabela com as respostas e os percentuais
+    pdf.text('Tipo', 30, y);
+    pdf.text('Respostas', 80, y);
+    pdf.text('Percentual', 140, y);
+    y += 8;
+    
+    // Linha separadora
+    pdf.line(20, y - 3, 190, y - 3);
+    y += 5;
+    
+    // Contagem das respostas por tipo
+    const counts = { D: 0, I: 0, S: 0, C: 0 };
+    this.answers.forEach(answer => {
+      if (answer) counts[answer]++;
+    });
+    
+    // Lista das respostas
+    Object.entries(counts).forEach(([type, count]) => {
+      pdf.text(type, 30, y);
+      pdf.text(`${count} de ${this.answers.length}`, 80, y);
+      pdf.text(`${this.percentages[type]}%`, 140, y);
+      y += 10;
+    });
+    
+    // Informações sobre as respostas
+    y += 10;
+    pdf.text('Suas respostas para cada pergunta:', 20, y);
+    y += 10;
+    
+    this.questions.forEach((q, index) => {
+      const answer = this.answers[index];
+      if (!answer) return;
+      
+      const questionText = q.question;
+      const answerText = q.options[answer];
+      
+      if (y > 250) {
+        pdf.addPage();
+        y = 20;
+      }
+      
+      pdf.setFont(styles.normal.font, 'bold');
+      const questionLines = pdf.splitTextToSize(`${index + 1}. ${questionText}`, 170);
+      pdf.text(questionLines, 20, y);
+      y += questionLines.length * 6;
+      
+      pdf.setFont(styles.normal.font, 'normal');
+      const answerLines = pdf.splitTextToSize(`Resposta: ${answerText}`, 170);
+      pdf.text(answerLines, 20, y);
+      y += answerLines.length * 6 + 3;
+    });
+    
+    // Salva o PDF
+    pdf.save('perfil-disc.pdf');
+  }
+}
+
+// Inicializa o teste quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    console.log("DOM carregado, iniciando teste...");
+    
+    // Verifica elementos essenciais
+    const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-bar', 'progress-text', 'results'];
+    essentialElements.forEach(id => {
+      if (!document.getElementById(id)) {
+        throw new Error(`Elemento essencial #${id} não encontrado`);
+      }
+    });
+
+    // Inicializa o teste
+    const discTest = new DiscTest(questionsData, profiles);
+    
+  } catch (error) {
+    console.error("Falha na inicialização:", error);
+    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
+  }
+});
+    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
+    y += 15;
+    
+    // Perfil primário e secundário
+    const primaryType = this.sortedTypes[0];
+    const secondaryType = this.sortedTypes[1];
+    const primaryProfile = this.profiles[primaryType];
+    const secondaryProfile = this.profiles[secondaryType];
+    
+    // Gráfico de distribuição (em texto)
+    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
+    pdf.setFontSize(styles.subtitle.size);
+    pdf.text('Distribuição do Perfil DISC', 20, y);
+    y += 10;
+    
+    pdf.setFont(styles.normal.font, styles.normal.style);
+    pdf.setFontSize(styles.normal.size);
