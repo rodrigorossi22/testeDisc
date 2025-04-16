@@ -891,20 +891,3 @@ document.addEventListener('DOMContentLoaded', function() {
     alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
   }
 });
-    pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
-    y += 15;
-    
-    // Perfil primário e secundário
-    const primaryType = this.sortedTypes[0];
-    const secondaryType = this.sortedTypes[1];
-    const primaryProfile = this.profiles[primaryType];
-    const secondaryProfile = this.profiles[secondaryType];
-    
-    // Gráfico de distribuição (em texto)
-    pdf.setFont(styles.subtitle.font, styles.subtitle.style);
-    pdf.setFontSize(styles.subtitle.size);
-    pdf.text('Distribuição do Perfil DISC', 20, y);
-    y += 10;
-    
-    pdf.setFont(styles.normal.font, styles.normal.style);
-    pdf.setFontSize(styles.normal.size);
