@@ -1,3 +1,4 @@
+window.jsPDF = window.jspdf.jsPDF;
 // Adicione no início do arquivo, antes de tudo
 console.log("=== INICIANDO TESTE DISC ===");
 
@@ -579,11 +580,6 @@ document.addEventListener('DOMContentLoaded', function() {
   try {
     console.log("DOM carregado, iniciando teste...");
     
-    // Verifica se jsPDF está disponível
-    if (!window.jspdf) {
-      console.warn("jsPDF não carregado - o recurso de PDF não estará disponível");
-    }
-
     // Verifica elementos essenciais
     const essentialElements = ['disc-form', 'prev-btn', 'next-btn', 'progress-text', 'results'];
     essentialElements.forEach(id => {
@@ -593,10 +589,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Inicializa o teste
-    new DiscTest(questionsData, profiles);
+    const discTest = new DiscTest(questionsData, profiles);
     
   } catch (error) {
     console.error("Falha na inicialização:", error);
-    alert("Error ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
+    alert("Erro ao carregar o teste. Por favor, recarregue a página.\nErro: " + error.message);
   }
 });
